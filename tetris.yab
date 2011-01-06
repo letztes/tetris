@@ -1,0 +1,54 @@
+#!/usr/bin/basic
+
+dim BLOCK_COLOR(4)
+dim figure(4)
+
+# measures in pixels
+WINDOW_WIDTH = 768 rem PAL TV norm
+WINDOW_HEIGHT = 576
+FIELD_OFFSET = 100
+
+# measures in blocks
+dim MATRIX(10,20)
+# needs to be adjusted to the actual figure when necessary
+START_X = 5
+START_Y = 0
+
+# measures in seconds
+TIMEQUANT = 0.1
+
+
+
+sub is_move_ok()
+    
+end sub
+
+sub clear_block(block_x, block_y)
+    
+end sub
+
+sub draw_block(block_x, block_y)
+    
+end sub
+
+sub clear_figure(root_block_x, root_block_y)
+    
+end sub
+
+sub draw_figure(root_block_x, root_block_y)
+    
+end sub
+
+sub game_over()
+    
+end sub
+
+sub main()
+    open window WINDOW_WIDTH, WINDOW_HEIGHT
+    backcolor 255,0,0
+    color 0,255,0
+    fill rectangle 10,10 to 200,200
+    wait 2
+end sub
+
+main()
