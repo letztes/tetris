@@ -1,12 +1,20 @@
 #!/usr/bin/basic
+# yabasic 2.7x
 
 dim BLOCK_COLOR(4)
 dim figure(4)
 
+COLUMNS = 10
+ROWS = 20
+
 # measures in pixels
 WINDOW_WIDTH = 768 rem PAL TV norm
 WINDOW_HEIGHT = 576
-FIELD_OFFSET = 100
+BLOCK_WIDTH = 25
+FIELD_OFFSET_X = 100
+FIELD_OFFSET_Y = 50
+FIELD_WIDTH = BLOCK_WIDTH * COLUMNS
+FIELD_HEIGHT = BLOCK_WIDTH * ROWS
 
 # measures in blocks
 dim MATRIX(10,20)
@@ -24,11 +32,13 @@ sub is_move_ok()
 end sub
 
 sub clear_block(block_x, block_y)
-    
+    color 0,0,0
+    fill rectangle block_x, block_y to block_x+BLOCK_WIDTH, block_y+BLOCK_WIDTH
 end sub
 
 sub draw_block(block_x, block_y)
-    
+    color 155,155,200
+    fill rectangle block_x, block_y to block_x+BLOCK_WIDTH, block_y+BLOCK_WIDTH
 end sub
 
 sub clear_figure(root_block_x, root_block_y)
@@ -39,16 +49,71 @@ sub draw_figure(root_block_x, root_block_y)
     
 end sub
 
+sub is_game_over(root_block_x, root_block_y)
+    return 0
+end sub
+
 sub game_over()
     
 end sub
 
 sub main()
     open window WINDOW_WIDTH, WINDOW_HEIGHT
-    backcolor 255,0,0
-    color 0,255,0
-    fill rectangle 10,10 to 200,200
-    wait 2
+    backcolor 0,0,0
+    REM backcolor does not work, that is why big black rectangle
+    color 0,0,0
+    fill rectangle 0,0 to WINDOW_WIDTH, WINDOW_HEIGHT
+    
+    REM draw field border
+    color 150,150,150
+    rectangle FIELD_OFFSET_X, FIELD_OFFSET_Y to FIELD_OFFSET_X+FIELD_WIDTH, FIELD_OFFSET_Y+FIELD_HEIGHT
+    
+    root_block_x = START_X
+    root_block_y = START_X
+    
+    while(!is_game_over(root_block_x, root_block_y))
+        clear_block(root_block_x, root_block_y)
+        root_block_y = root_block_y + BLOCK_WIDTH
+        draw_block(root_block_x, root_block_y)
+        for i = 1 to 10
+            wait TIMEQUANT
+        next
+    wend
+    
 end sub
 
 main()
+
+#######################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
