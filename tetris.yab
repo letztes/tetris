@@ -1,6 +1,15 @@
 #!/usr/bin/basic
 # yabasic 2.7x
 
+
+# TODO
+# FIXES:
+# find out why block is not going down while keystrokes are read continuosly (>10 subsequent keystrokes)
+#
+# FEATURES
+# Brickrotation
+# 
+
 dim BLOCK_COLOR(4)
 dim figure(4)
 
@@ -17,65 +26,68 @@ FIELD_WIDTH = BLOCK_WIDTH * COLUMNS
 FIELD_HEIGHT = BLOCK_WIDTH * ROWS
 
 # measures in blocks
-dim MATRIX(9,19)
+dim MATRIX(10,20)
 
 # needs to be adjusted to the actual figure when necessary
 START_X = 5
-START_Y = 0
+START_Y = 1
 
 # measures in seconds
 TIMEQUANT = 0.1
 
 
 
-sub is_move_ok()
-    return 1
-end sub
 
 sub clear_block(block_x, block_y)
+    MATRIX(block_x, block_y) = 0
     color 0,0,0
     fill rectangle FIELD_OFFSET_X+block_x*BLOCK_WIDTH, FIELD_OFFSET_Y+block_y*BLOCK_WIDTH to FIELD_OFFSET_X+block_x*BLOCK_WIDTH+BLOCK_WIDTH, FIELD_OFFSET_Y+block_y*BLOCK_WIDTH+BLOCK_WIDTH
 end sub
 
+
 sub draw_block(block_x, block_y)
+    MATRIX(block_x, block_y) = -1
     color 155,155,200
     fill rectangle FIELD_OFFSET_X+block_x*BLOCK_WIDTH, FIELD_OFFSET_Y+block_y*BLOCK_WIDTH to FIELD_OFFSET_X+block_x*BLOCK_WIDTH+BLOCK_WIDTH, FIELD_OFFSET_Y+block_y*BLOCK_WIDTH+BLOCK_WIDTH
 end sub
 
-sub clear_figure(root_block_x, root_block_y, figure())
+
+sub clear_figure(block_x, block_y, figure())
     for i=0 to arraysize(figure(), 1)
         if figure(i) = 0 then
-            clear_block(root_block_x, root_block_y)
+            clear_block(block_x, block_y)
         elsif figure(i) = 1 then
-            root_block_x = root_block_x + 1
-            clear_block(root_block_x, root_block_y)
+            block_x = block_x + 1
+            clear_block(block_x, block_y)
         elsif figure(i) = 2 then
-            root_block_x = root_block_x - 1
-            clear_block(root_block_x, root_block_y)
+            block_x = block_x - 1
+            clear_block(block_x, block_y)
         elsif figure(i) = 3 then
-            root_block_y = root_block_y - 1
-            clear_block(root_block_x, root_block_y)
+            block_y = block_y - 1
+            clear_block(block_x, block_y)
         fi
     next
 end sub
 
-sub draw_figure(root_block_x, root_block_y, figure())
+
+sub draw_figure(block_x, block_y, figure())
     for i=0 to arraysize(figure(), 1)
         if figure(i) = 0 then
-            draw_block(root_block_x, root_block_y)
+            draw_block(block_x, block_y)
         elsif figure(i) = 1 then
-            root_block_x = root_block_x + 1
-            draw_block(root_block_x, root_block_y)
+            block_x = block_x + 1
+            draw_block(block_x, block_y)
         elsif figure(i) = 2 then
-            root_block_x = root_block_x - 1
-            draw_block(root_block_x, root_block_y)
+            block_x = block_x - 1
+            draw_block(block_x, block_y)
         elsif figure(i) = 3 then
-            root_block_y = root_block_y - 1
-            draw_block(root_block_x, root_block_y)
+            block_y = block_y - 1
+            draw_block(block_x, block_y)
         fi
     next
     
 end sub
+
 
 sub choose_figure(figure(), figure_number)
     
@@ -84,65 +96,100 @@ sub choose_figure(figure(), figure_number)
         figure(1) = 1
         figure(2) = 1
         figure(3) = 1
+        figure(4) = 0
         return 1
     elsif figure_number = 1 then               REM vertical stick
         figure(0) = 0
         figure(1) = 3
         figure(2) = 3
         figure(3) = 3
+        figure(4) = 0
         return 1
     elsif figure_number = 2 then               REM square block
         figure(0) = 0
         figure(1) = 1
         figure(2) = 3
         figure(3) = 2
+        figure(4) = 0
         return 1
     elsif figure_number = 3 then               REM bottom-left horizontal L
         figure(0) = 0
         figure(1) = 3
         figure(2) = 1
         figure(3) = 1
+        figure(4) = 0
         return 1
     elsif figure_number = 4 then               REM bottom-right horizontal L
         figure(0) = 0
         figure(1) = 3
         figure(2) = 2
         figure(3) = 2
+        figure(4) = 0
         return 1
     elsif figure_number = 5 then               REM bottom-left vertical L
         figure(0) = 0
         figure(1) = 3
         figure(2) = 3
         figure(3) = 1
+        figure(4) = 0
         return 1
     elsif figure_number = 6 then               REM bottom-right vertical L
         figure(0) = 0
         figure(1) = 3
         figure(2) = 3
         figure(3) = 2
+        figure(4) = 0
         return 1
-    elsif figure_number = 7 then               REM nose top horizontal T-block
+    elsif figure_number = 7 then               REM left bottom horizontal S-block
+        figure(0) = 0
+        figure(1) = 1
+        figure(2) = 3
+        figure(3) = 1
+        figure(4) = 0
+        return 1
+    elsif figure_number = 8 then               REM right bottom horizontal S-block
+        figure(0) = 0
+        figure(1) = 2
+        figure(2) = 3
+        figure(3) = 2
+        figure(4) = 0
+        return 1
+    elsif figure_number = 9 then               REM left bottom vertical S-block
+        figure(0) = 0
+        figure(1) = 3
+        figure(2) = 1
+        figure(3) = 3
+        figure(4) = 0
+        return 1
+    elsif figure_number = 10 then               REM right bottom vertical S-block
+        figure(0) = 0
+        figure(1) = 3
+        figure(2) = 2
+        figure(3) = 3
+        figure(4) = 0
+        return 1
+    elsif figure_number = 11 then               REM nose top horizontal T-block
         figure(0) = 0
         figure(1) = 1
         figure(2) = 1
         figure(3) = 2
         figure(4) = 3
         return 1
-    elsif figure_number = 8 then               REM nose down horizontal T-block
+    elsif figure_number = 12 then               REM nose down horizontal T-block
         figure(0) = 0
         figure(1) = 3
         figure(2) = 2
         figure(3) = 1
         figure(4) = 1
         return 1
-    elsif figure_number = 9 then               REM nose left vertical T-block
+    elsif figure_number = 13 then               REM nose left vertical T-block
         figure(0) = 0
         figure(1) = 3
         figure(2) = 2
         figure(3) = 1
         figure(4) = 3
         return 1
-    elsif figure_number = 10 then               REM nose right vertical T-block
+    elsif figure_number = 14 then               REM nose right vertical T-block
         figure(0) = 0
         figure(1) = 3
         figure(2) = 1
@@ -152,16 +199,22 @@ sub choose_figure(figure(), figure_number)
     fi
 end sub
 
+
 sub set_root_block_x(root_block_x, figure_number)
     switch figure_number
         case 0: return root_block_x-2  REM horizontal stick
+        case 2: return root_block_x-1  REM square block
         case 3: return root_block_x-1  REM bottom-left horizontal L
         case 4: return root_block_x+1  REM bottom-right horizontal L
-        case 7: return root_block_x-1  REM nose top horizontal T-block
-        case 8: return root_block_x-1  REM nose down horizontal T-block
+        case 7: return root_block_x-1  REM left bottom horizontal S-block
+        case 8: return root_block_x+1  REM right bottom horizontal S-block
+        case 9: return root_block_x-1  REM right bottom horizontal S-block
+        case 11: return root_block_x-1 REM nose top horizontal T-block
+        case 12: return root_block_x-1 REM nose down horizontal T-block
         default: return root_block_x
     end switch
 end sub
+
 
 sub set_root_block_y(root_block_y, figure_number)
     switch figure_number
@@ -169,19 +222,44 @@ sub set_root_block_y(root_block_y, figure_number)
         case 1: return root_block_y+3  REM vertical stick
         case 5: return root_block_y+2  REM bottom-left vertical L
         case 6: return root_block_y+2  REM bottom-right vertical L
-        case 9: return root_block_y+2  REM nose left vertical T-block
-        case 10: return root_block_y+2 REM nose right vertical T-block
+        case 7: return root_block_y    REM left bottom horizontal S-block
+        case 8: return root_block_y    REM right bottom horizontal S-block
+        case 13: return root_block_y+2 REM nose left vertical T-block
+        case 14: return root_block_y+2 REM nose right vertical T-block
         default: return root_block_y+1
     end switch
 end sub
 
+
 sub is_turn_over(root_block_x, root_block_y)
+    if root_block_y = 20 or MATRIX(root_block_x, root_block_y) = 2 then
+        clear_figure(root_block_x, root_block_y, figure())
+        root_block_y = root_block_y - 1
+        draw_figure(root_block_x, root_block_y, figure())
+        return 1
+    fi
     return 0
 end sub
 
-sub is_game_over(root_block_x, root_block_y)
+
+sub is_game_over(block_x, block_y, figure())
+
+    for i=0 to arraysize(figure(), 1)
+        if figure(i) = 1 then
+            block_x = block_x + 1
+        elsif figure(i) = 2 then
+            block_x = block_x - 1
+        elsif figure(i) = 3 then
+            block_y = block_y - 1
+        fi
+        print MATRIX(block_x, block_y)
+        if MATRIX(block_x, block_y) = 1 then
+            return 1
+        fi
+    next
     return 0
 end sub
+
 
 sub pause_game()
     keystroke$ = inkey$()
@@ -189,6 +267,7 @@ sub pause_game()
         return 1
     fi
 end sub
+
 
 sub game_over()
     color 0,0,0
@@ -198,6 +277,39 @@ sub game_over()
     inkey$
     exit
 end sub
+
+
+sub is_move_ok(figure(), block_x, block_y)
+    for i=0 to arraysize(figure(), 1)
+        if figure(i) = 1 then
+            block_x = block_x + 1
+        elsif figure(i) = 2 then
+            block_x = block_x - 1
+        elsif figure(i) = 3 then
+            block_y = block_y - 1
+        fi
+        if block_x < 0: return 0
+        if block_x > 9: return 0
+        if block_y > 19: return 0
+        if MATRIX(block_x, block_y) > 0: return 0
+    next
+    return 1
+end sub
+
+
+sub turn_is_over(block_x, block_y, figure())
+    for i=0 to arraysize(figure(), 1)
+        if figure(i) = 1 then
+            block_x = block_x + 1
+        elsif figure(i) = 2 then
+            block_x = block_x - 1
+        elsif figure(i) = 3 then
+            block_y = block_y - 1
+        fi
+        MATRIX(block_x, block_y) = 1
+    next
+end sub
+
 
 sub main()
     clear screen REM reading keystrokes with inkey$() needs 'clear screen'
@@ -211,58 +323,71 @@ sub main()
     color 150,150,150
     rectangle FIELD_OFFSET_X, FIELD_OFFSET_Y to FIELD_OFFSET_X+FIELD_WIDTH, FIELD_OFFSET_Y+FIELD_HEIGHT
     
-    while(!is_game_over(root_block_x, root_block_y))
+    local figure_number
+    local figure(4)
+#   "while not game over"-LOOP
+    while(1=1)
         
-        local figure_number
-        figure_number = int(ran(11))
+        figure_number = int(ran(15))
         
 # arrays are passed by reference to subroutines; no need to return the array
-        local figure(4)
         choose_figure(figure(), figure_number)
         
         
         root_block_x = set_root_block_x(START_X, figure_number)
         root_block_y = set_root_block_y(START_Y, figure_number)
         
-        clear_figure(root_block_x, root_block_y, figure())
+        if is_game_over(root_block_x, root_block_y, figure()) then
+            draw_figure(root_block_x, root_block_y, figure())
+            wait TIMEQUANT*10
+            game_over()
+        fi
+        
+        if root_block_y > 0: clear_figure(root_block_x, root_block_y, figure())
         root_block_y = root_block_y + 1
         draw_figure(root_block_x, root_block_y, figure())
-        
-        while(!is_turn_over(root_block_x, root_block_y))
+                
+#       "while figure is falling down and has not landed yet"-LOOP
+        while(1=1)
             for i = 1 to 10
-                direction$ = inkey$(TIMEQUANT)
-                if direction$ = "right" then
-                    if root_block_x < COLUMNS then
-                        clear_figure(root_block_x, root_block_y, figure())
-                        root_block_x = root_block_x + 1
-                        draw_figure(root_block_x, root_block_y, figure())
+                keystroke$ = inkey$(TIMEQUANT)
+                if !keystroke$="" then
+                    if keystroke$ = "right" then
+                        if root_block_x < COLUMNS and is_move_ok(figure(), root_block_x+1, root_block_y) then
+                            clear_figure(root_block_x, root_block_y, figure())
+                            root_block_x = root_block_x + 1
+                            draw_figure(root_block_x, root_block_y, figure())
+                        fi
+                    elsif keystroke$ = "left" then
+                        if root_block_x > 0 and is_move_ok(figure(), root_block_x-1, root_block_y) then
+                            clear_figure(root_block_x, root_block_y, figure())
+                            root_block_x = root_block_x - 1
+                            draw_figure(root_block_x, root_block_y, figure())
+                        fi
+                    elsif keystroke$ = "down" then
+                        if root_block_y < 19 and is_move_ok(figure(), root_block_x, root_block_y+1) then
+                            clear_figure(root_block_x, root_block_y, figure())
+                            root_block_y = root_block_y + 1
+                            draw_figure(root_block_x, root_block_y, figure())
+                        fi
+                    elsif keystroke$ = "p" then
+                        pause_game()
+                    elsif keystroke$ = "q" or keystroke$ = "esc" then
+                        exit
                     fi
-                elsif direction$ = "left" then
-                    if root_block_x > 0 then
-                        clear_figure(root_block_x, root_block_y, figure())
-                        root_block_x = root_block_x - 1
-                        draw_figure(root_block_x, root_block_y, figure())
-                    fi
-                elsif direction$ = "down" then
-                    if root_block_y > 0 and MATRIX(root_block_x, root_block_y+1) = 0 then
-                        clear_figure(root_block_x, root_block_y, figure())
-                        root_block_y = root_block_y + 1
-                        draw_figure(root_block_x, root_block_y, figure())
-                    fi
-                elsif direction$ = "p" then
-                    pause_game()
-                elsif direction$ = "q" or direction$ = "esc" then
-                    exit
                 fi
             next
-            if root_block_y > 0 and MATRIX(root_block_x, root_block_y+1) = 0 then
+            if root_block_y < 19 and is_move_ok(figure(), root_block_x, root_block_y+1) then
                 clear_figure(root_block_x, root_block_y, figure())
                 root_block_y = root_block_y + 1
                 draw_figure(root_block_x, root_block_y, figure())
+            else
+                turn_is_over(root_block_x, root_block_y, figure())
+                break
             fi
         wend
     wend
-    
+    game_over()
 end sub
 
 main()
