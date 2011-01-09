@@ -17,7 +17,8 @@ FIELD_WIDTH = BLOCK_WIDTH * COLUMNS
 FIELD_HEIGHT = BLOCK_WIDTH * ROWS
 
 # measures in blocks
-dim MATRIX(10,20)
+dim MATRIX(9,19)
+
 # needs to be adjusted to the actual figure when necessary
 START_X = 5
 START_Y = 0
@@ -28,7 +29,7 @@ TIMEQUANT = 0.1
 
 
 sub is_move_ok()
-    
+    return 1
 end sub
 
 sub clear_block(block_x, block_y)
@@ -156,8 +157,8 @@ sub set_root_block_x(root_block_x, figure_number)
         case 0: return root_block_x-2  REM horizontal stick
         case 3: return root_block_x-1  REM bottom-left horizontal L
         case 4: return root_block_x+1  REM bottom-right horizontal L
-#        case 7: return root_block_x-1  REM nose top horizontal T-block
-#        case 8: return root_block_x-1  REM nose down horizontal T-block
+        case 7: return root_block_x-1  REM nose top horizontal T-block
+        case 8: return root_block_x-1  REM nose down horizontal T-block
         default: return root_block_x
     end switch
 end sub
@@ -182,11 +183,24 @@ sub is_game_over(root_block_x, root_block_y)
     return 0
 end sub
 
+sub pause_game()
+    keystroke$ = inkey$()
+    if keystroke$ = "p" then
+        return 1
+    fi
+end sub
+
 sub game_over()
-    
+    color 0,0,0
+    fill rectangle 0,0 to WINDOW_WIDTH, WINDOW_HEIGHT
+    color 150,150,150
+    text int(WINDOW_WIDTH/2)-25, int(WINDOW_HEIGHT/2), "Game Over"
+    inkey$
+    exit
 end sub
 
 sub main()
+    clear screen REM reading keystrokes with inkey$() needs 'clear screen'
     open window WINDOW_WIDTH, WINDOW_HEIGHT
     backcolor 0,0,0
     REM backcolor does not work, that is why big black rectangle
@@ -196,8 +210,6 @@ sub main()
     REM draw field border
     color 150,150,150
     rectangle FIELD_OFFSET_X, FIELD_OFFSET_Y to FIELD_OFFSET_X+FIELD_WIDTH, FIELD_OFFSET_Y+FIELD_HEIGHT
-    
-    
     
     while(!is_game_over(root_block_x, root_block_y))
         
@@ -212,13 +224,42 @@ sub main()
         root_block_x = set_root_block_x(START_X, figure_number)
         root_block_y = set_root_block_y(START_Y, figure_number)
         
+        clear_figure(root_block_x, root_block_y, figure())
+        root_block_y = root_block_y + 1
+        draw_figure(root_block_x, root_block_y, figure())
+        
         while(!is_turn_over(root_block_x, root_block_y))
-            clear_figure(root_block_x, root_block_y, figure())
-            root_block_y = root_block_y + 1
-            draw_figure(root_block_x, root_block_y, figure())
             for i = 1 to 10
-                wait TIMEQUANT
+                direction$ = inkey$(TIMEQUANT)
+                if direction$ = "right" then
+                    if root_block_x < COLUMNS then
+                        clear_figure(root_block_x, root_block_y, figure())
+                        root_block_x = root_block_x + 1
+                        draw_figure(root_block_x, root_block_y, figure())
+                    fi
+                elsif direction$ = "left" then
+                    if root_block_x > 0 then
+                        clear_figure(root_block_x, root_block_y, figure())
+                        root_block_x = root_block_x - 1
+                        draw_figure(root_block_x, root_block_y, figure())
+                    fi
+                elsif direction$ = "down" then
+                    if root_block_y > 0 and MATRIX(root_block_x, root_block_y+1) = 0 then
+                        clear_figure(root_block_x, root_block_y, figure())
+                        root_block_y = root_block_y + 1
+                        draw_figure(root_block_x, root_block_y, figure())
+                    fi
+                elsif direction$ = "p" then
+                    pause_game()
+                elsif direction$ = "q" or direction$ = "esc" then
+                    exit
+                fi
             next
+            if root_block_y > 0 and MATRIX(root_block_x, root_block_y+1) = 0 then
+                clear_figure(root_block_x, root_block_y, figure())
+                root_block_y = root_block_y + 1
+                draw_figure(root_block_x, root_block_y, figure())
+            fi
         wend
     wend
     
