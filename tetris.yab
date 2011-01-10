@@ -27,15 +27,18 @@ COLUMNS = 10
 ROWS = 20
 
 # measures in pixels
-WINDOW_WIDTH = 768 rem PAL TV norm
+WINDOW_WIDTH = 768 rem PAL TV norm. More or less.
 WINDOW_HEIGHT = 576
 BLOCK_WIDTH = 25
 FIELD_OFFSET_X = 200
 FIELD_OFFSET_Y = 50
 FIELD_WIDTH = BLOCK_WIDTH * COLUMNS
 FIELD_HEIGHT = BLOCK_WIDTH * ROWS
+
 PREVIEW_WINDOW_WIDTH  = BLOCK_WIDTH*6
 PREVIEW_WINDOW_HEIGHT = BLOCK_WIDTH*6
+PREVIEW_WINDOW_OFFSET_X = FIELD_OFFSET_X+FIELD_WIDTH+PREVIEW_WINDOW_WIDTH/2
+PREVIEW_WINDOW_OFFSET_Y = FIELD_OFFSET_Y+PREVIEW_WINDOW_HEIGHT/2+BLOCK_WIDTH
 
 # measures in blocks
 dim MATRIX(10,20)
@@ -63,15 +66,51 @@ sub clear_block(block_x, block_y)
 end sub
 
 
-sub draw_block(block_x, block_y)
+sub draw_block(block_x, block_y, figure_number, preview)
+    local inner_color$
+    local border_color$
+    local shining_color$
+    local offset_x
+    local offset_y
+    
+    shining_color$ = "234,234,234" REM white
+    if preview=1 then
+        offset_x = PREVIEW_WINDOW_OFFSET_X
+        offset_y = PREVIEW_WINDOW_OFFSET_Y
+    else
+        offset_x = FIELD_OFFSET_X
+        offset_y = FIELD_OFFSET_Y
+    fi
+    
     MATRIX(block_x, block_y) = -1
-    color 155,155,200
-    fill rectangle FIELD_OFFSET_X+block_x*BLOCK_WIDTH, FIELD_OFFSET_Y+block_y*BLOCK_WIDTH to FIELD_OFFSET_X+block_x*BLOCK_WIDTH+BLOCK_WIDTH, FIELD_OFFSET_Y+block_y*BLOCK_WIDTH+BLOCK_WIDTH
-end sub
-
-sub draw_preview_block(block_x, block_y)
-    color 155,155,200
-    fill rectangle FIELD_OFFSET_X+FIELD_WIDTH+PREVIEW_WINDOW_WIDTH/2+block_x*BLOCK_WIDTH, FIELD_OFFSET_Y+PREVIEW_WINDOW_HEIGHT/2+BLOCK_WIDTH+block_y*BLOCK_WIDTH to FIELD_OFFSET_X+FIELD_WIDTH+PREVIEW_WINDOW_WIDTH/2+block_x*BLOCK_WIDTH+BLOCK_WIDTH, FIELD_OFFSET_Y+PREVIEW_WINDOW_HEIGHT/2+BLOCK_WIDTH+block_y*BLOCK_WIDTH+BLOCK_WIDTH
+    switch figure_number
+        case 3: case 4: case 5: case 6: case 13: case 14: inner_color$="155,155,200": border_color$="155,155,200": break
+        case 7: case 8: case 9: case 10: case 11: case 12: inner_color$="115,115,220": border_color$="115,115,220": break
+        default: inner_color$=shining_color$: border_color$="115,115,220"
+    end switch
+    color inner_color$
+    fill rectangle offset_x+block_x*BLOCK_WIDTH, offset_y+block_y*BLOCK_WIDTH to offset_x+block_x*BLOCK_WIDTH+BLOCK_WIDTH, offset_y+block_y*BLOCK_WIDTH+BLOCK_WIDTH
+    color 1,1,1
+    REM Black border around the brick, 2px thick
+    rectangle offset_x+block_x*BLOCK_WIDTH, offset_y+block_y*BLOCK_WIDTH to offset_x+block_x*BLOCK_WIDTH+BLOCK_WIDTH, offset_y+block_y*BLOCK_WIDTH+BLOCK_WIDTH
+    rectangle offset_x+block_x*BLOCK_WIDTH+1, offset_y+block_y*BLOCK_WIDTH+1 to offset_x+block_x*BLOCK_WIDTH+BLOCK_WIDTH-1, offset_y+block_y*BLOCK_WIDTH+BLOCK_WIDTH-1
+    REM Colored Border, 2px thick
+    color border_color$
+    rectangle offset_x+block_x*BLOCK_WIDTH+2, offset_y+block_y*BLOCK_WIDTH+2 to offset_x+block_x*BLOCK_WIDTH+BLOCK_WIDTH-2, offset_y+block_y*BLOCK_WIDTH+BLOCK_WIDTH-2
+    rectangle offset_x+block_x*BLOCK_WIDTH+3, offset_y+block_y*BLOCK_WIDTH+3 to offset_x+block_x*BLOCK_WIDTH+BLOCK_WIDTH-3, offset_y+block_y*BLOCK_WIDTH+BLOCK_WIDTH-3
+    
+    REM White shining in the upper right corner
+    color shining_color$
+    dot offset_x+block_x*BLOCK_WIDTH, offset_y+block_y*BLOCK_WIDTH
+    dot offset_x+block_x*BLOCK_WIDTH+1, offset_y+block_y*BLOCK_WIDTH
+    dot offset_x+block_x*BLOCK_WIDTH, offset_y+block_y*BLOCK_WIDTH+1
+    dot offset_x+block_x*BLOCK_WIDTH+1, offset_y+block_y*BLOCK_WIDTH+1
+    dot offset_x+block_x*BLOCK_WIDTH+4, offset_y+block_y*BLOCK_WIDTH+4
+    dot offset_x+block_x*BLOCK_WIDTH+4, offset_y+block_y*BLOCK_WIDTH+5
+    dot offset_x+block_x*BLOCK_WIDTH+5, offset_y+block_y*BLOCK_WIDTH+4
+    dot offset_x+block_x*BLOCK_WIDTH+6, offset_y+block_y*BLOCK_WIDTH+4
+    dot offset_x+block_x*BLOCK_WIDTH+4, offset_y+block_y*BLOCK_WIDTH+6
+    dot offset_x+block_x*BLOCK_WIDTH+5, offset_y+block_y*BLOCK_WIDTH+5
 end sub
 
 
@@ -94,20 +133,20 @@ sub clear_figure(block_x, block_y, figure())
 end sub
 
 
-sub draw_figure(block_x, block_y, figure())
+sub draw_figure(block_x, block_y, figure(), figure_number)
     local i
     for i=0 to arraysize(figure(), 1)
         if figure(i) = 0 then
-            draw_block(block_x, block_y)
+            draw_block(block_x, block_y, figure_number)
         elsif figure(i) = 1 then
             block_x = block_x + 1
-            draw_block(block_x, block_y)
+            draw_block(block_x, block_y, figure_number)
         elsif figure(i) = 2 then
             block_x = block_x - 1
-            draw_block(block_x, block_y)
+            draw_block(block_x, block_y, figure_number)
         elsif figure(i) = 3 then
             block_y = block_y - 1
-            draw_block(block_x, block_y)
+            draw_block(block_x, block_y, figure_number)
         fi
     next
     
@@ -129,24 +168,26 @@ sub display_preview_figure(next_figure_number)
     
     REM draw the next figure
     color 150,150,150
-    draw_preview_figure(next_figure_root_block_x, next_figure_root_block_y, next_figure())
+    draw_preview_figure(next_figure_root_block_x, next_figure_root_block_y, next_figure(), next_figure_number)
     
 end sub
 
-sub draw_preview_figure(block_x, block_y, preview_figure())
+sub draw_preview_figure(block_x, block_y, preview_figure(), next_figure_number)
     local i
+    local preview
+    preview = 1
     for i=0 to arraysize(preview_figure(), 1)
         if preview_figure(i) = 0 then
-            draw_preview_block(block_x, block_y)
+            draw_block(block_x, block_y, next_figure_number, preview)
         elsif preview_figure(i) = 1 then
             block_x = block_x + 1
-            draw_preview_block(block_x, block_y)
+            draw_block(block_x, block_y, next_figure_number, preview)
         elsif preview_figure(i) = 2 then
             block_x = block_x - 1
-            draw_preview_block(block_x, block_y)
+            draw_block(block_x, block_y, next_figure_number, preview)
         elsif preview_figure(i) = 3 then
             block_y = block_y - 1
-            draw_preview_block(block_x, block_y)
+            draw_block(block_x, block_y, next_figure_number, preview)
         fi
     next
     
@@ -347,31 +388,13 @@ sub set_root_block_y(root_block_y, figure_number)
 end sub
 
 
-sub is_turn_over(root_block_x, root_block_y)
+sub is_turn_over(root_block_x, root_block_y, figure_number)
     if root_block_y = 20 or MATRIX(root_block_x, root_block_y) = 2 then
         clear_figure(root_block_x, root_block_y, figure())
         root_block_y = root_block_y - 1
-        draw_figure(root_block_x, root_block_y, figure())
+        draw_figure(root_block_x, root_block_y, figure(), figure_number)
         return 1
     fi
-    return 0
-end sub
-
-
-sub is_game_over(block_x, block_y, figure())
-
-    for i=0 to arraysize(figure(), 1)
-        if figure(i) = 1 then
-            block_x = block_x + 1
-        elsif figure(i) = 2 then
-            block_x = block_x - 1
-        elsif figure(i) = 3 then
-            block_y = block_y - 1
-        fi
-        if MATRIX(block_x, block_y) = 1 then
-            return 1
-        fi
-    next
     return 0
 end sub
 
@@ -446,7 +469,7 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
-            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure())
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
             
         fi
         
@@ -463,7 +486,7 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
-            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure())
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
             
         fi
         
@@ -482,7 +505,7 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
-            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure())
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
             
         fi
         
@@ -499,7 +522,7 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
-            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure())
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
             
         fi
         
@@ -516,7 +539,7 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
-            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure())
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
             
         fi
         
@@ -533,7 +556,7 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
-            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure())
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
             
         fi
         
@@ -550,7 +573,7 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
-            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure())
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
             
         fi
         
@@ -567,7 +590,7 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
-            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure())
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
             
         fi
         
@@ -584,7 +607,7 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
-            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure())
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
             
         fi
         
@@ -601,7 +624,7 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
-            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure())
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
             
         fi
     REM left bottom horizontal S-block    
@@ -617,7 +640,7 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
-            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure())
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
             
         fi
         
@@ -634,7 +657,7 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
-            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure())
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
             
         fi
         
@@ -651,7 +674,7 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
-            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure())
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
             
         fi
         
@@ -668,7 +691,7 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
-            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure())
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
             
         fi
         
@@ -685,7 +708,7 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
-            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure())
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
             
         fi
         
@@ -702,7 +725,7 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
-            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure())
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
             
         fi
         
@@ -719,7 +742,7 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
-            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure())
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
             
         fi
         
@@ -736,7 +759,7 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
-            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure())
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
             
         fi
     fi
@@ -785,15 +808,15 @@ sub main()
         root_block_x = set_root_block_x(START_X, figure_number)
         root_block_y = set_root_block_y(START_Y, figure_number)
         
-        if is_game_over(root_block_x, root_block_y, figure()) then
-            draw_figure(root_block_x, root_block_y, figure())
+        if !is_move_ok(figure(), root_block_x, root_block_y) then
+            draw_figure(root_block_x, root_block_y, figure(), figure_number)
             wait TIMEQUANT*10
             game_over()
         fi
         
         if root_block_y > 0: clear_figure(root_block_x, root_block_y, figure())
         root_block_y = root_block_y + 1
-        draw_figure(root_block_x, root_block_y, figure())
+        draw_figure(root_block_x, root_block_y, figure(), figure_number)
                 
 #       "while figure is falling down and has not landed yet"-LOOP
         while(1=1)
@@ -804,19 +827,19 @@ sub main()
                         if is_move_ok(figure(), root_block_x+1, root_block_y) then
                             clear_figure(root_block_x, root_block_y, figure())
                             root_block_x = root_block_x + 1
-                            draw_figure(root_block_x, root_block_y, figure())
+                            draw_figure(root_block_x, root_block_y, figure(), figure_number)
                         fi
                     elsif keystroke$ = "left" then
                         if is_move_ok(figure(), root_block_x-1, root_block_y) then
                             clear_figure(root_block_x, root_block_y, figure())
                             root_block_x = root_block_x - 1
-                            draw_figure(root_block_x, root_block_y, figure())
+                            draw_figure(root_block_x, root_block_y, figure(), figure_number)
                         fi
                     elsif keystroke$ = "down" then
                         if is_move_ok(figure(), root_block_x, root_block_y+1) then
                             clear_figure(root_block_x, root_block_y, figure())
                             root_block_y = root_block_y + 1
-                            draw_figure(root_block_x, root_block_y, figure())
+                            draw_figure(root_block_x, root_block_y, figure(), figure_number)
                         fi
                     elsif keystroke$ = "up" then
                         figure_number = rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
@@ -832,7 +855,7 @@ sub main()
             if root_block_y < 19 and is_move_ok(figure(), root_block_x, root_block_y+1) then
                 clear_figure(root_block_x, root_block_y, figure())
                 root_block_y = root_block_y + 1
-                draw_figure(root_block_x, root_block_y, figure())
+                draw_figure(root_block_x, root_block_y, figure(), figure_number)
             else
                 turn_is_over(root_block_x, root_block_y, figure())
                 break
