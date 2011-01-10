@@ -1,6 +1,9 @@
 #!/usr/bin/basic
-# yabasic 2.7x
+# requires yabasic 2.7x, download at www.yabasic.de
 
+# Author:  Artur Spengler
+# Website: www.github.com/letztes/tetris
+# License: Do what you want with this code.
 
 # TODO
 # FIXES: 
@@ -8,12 +11,12 @@
 # REFACTORING
 # Make rotate_clockwise() more compact, there is to much repeating code
 # Define all the nonglobal variables as locals
+# Bring all the subroutines arguments in a consistent order: (figure_number, figure(), root_block_x, root_block_y)
 #
 # FEATURES
 # Displaying the keydescription, i.g. "Esc for exit"
 # Deletion of complete lines
 # Brickrotation counterclockwise
-# Different colors in different bricks
 # Counting up levels with each 10 completed lines and gaining speed
 # Counting points
 #
@@ -67,13 +70,18 @@ end sub
 
 
 sub draw_block(block_x, block_y, figure_number, preview)
-    local inner_color$
-    local border_color$
-    local shining_color$
+    local inner_color$ REM dark blue or bright blue
+    local border_color$ REM dark blue
+    local shining_color$ REM white
+    local dark_blue$
+    local bright_blue$
     local offset_x
     local offset_y
     
-    shining_color$ = "234,234,234" REM white
+    shining_color$ = "234,234,234"
+    dark_blue$ = "105,105,220"
+    bright_blue$ = "155,155,220"
+    
     if preview=1 then
         offset_x = PREVIEW_WINDOW_OFFSET_X
         offset_y = PREVIEW_WINDOW_OFFSET_Y
@@ -84,9 +92,9 @@ sub draw_block(block_x, block_y, figure_number, preview)
     
     MATRIX(block_x, block_y) = -1
     switch figure_number
-        case 3: case 4: case 5: case 6: case 13: case 14: inner_color$="155,155,200": border_color$="155,155,200": break
-        case 7: case 8: case 9: case 10: case 11: case 12: inner_color$="115,115,220": border_color$="115,115,220": break
-        default: inner_color$=shining_color$: border_color$="115,115,220"
+        case 3: case 4: case 5: case 6: case 13: case 14: inner_color$=bright_blue$: border_color$=bright_blue$: break
+        case 7: case 8: case 9: case 10: case 11: case 12: inner_color$=dark_blue$: border_color$=dark_blue$: break
+        default: inner_color$=shining_color$: border_color$=dark_blue$
     end switch
     color inner_color$
     fill rectangle offset_x+block_x*BLOCK_WIDTH, offset_y+block_y*BLOCK_WIDTH to offset_x+block_x*BLOCK_WIDTH+BLOCK_WIDTH, offset_y+block_y*BLOCK_WIDTH+BLOCK_WIDTH
