@@ -3,21 +3,24 @@
 
 
 # TODO
-# FIXES:
-# Fix that brick was not going down while keystrokes were read repeatedly (>10 subsequent keystrokes). The reason was that in the for i=0 to 10 loop some subroutines were called in which another iterator called i must have been modified/reset so it never came to 10. Fixed with "local" definition.
+# FIXES: 
 #
 # REFACTORING
 # Make rotate_clockwise() more compact, there is to much repeating code
+# Define all the nonglobal variables as locals
 #
 # FEATURES
+# Displaying the keydescription, i.g. "Esc for exit"
 # Deletion of complete lines
 # Brickrotation counterclockwise
 # Different colors in different bricks
 # Counting up levels with each 10 completed lines and gaining speed
 # Counting points
+#
+# DONE
+# Add preview of next brick
 
 dim BLOCK_COLOR(4)
-dim figure(4)
 dim rotated_figure(4)
 
 COLUMNS = 10
@@ -31,6 +34,8 @@ FIELD_OFFSET_X = 200
 FIELD_OFFSET_Y = 50
 FIELD_WIDTH = BLOCK_WIDTH * COLUMNS
 FIELD_HEIGHT = BLOCK_WIDTH * ROWS
+PREVIEW_WINDOW_WIDTH  = BLOCK_WIDTH*6
+PREVIEW_WINDOW_HEIGHT = BLOCK_WIDTH*6
 
 # measures in blocks
 dim MATRIX(10,20)
@@ -38,6 +43,8 @@ dim MATRIX(10,20)
 # needs to be adjusted to the actual figure when necessary
 START_X = 5
 START_Y = 0
+PREVIEW_START_X = 3
+PREVIEW_START_Y = 0
 
 # subroutines can return only one single value. so when rotating the brick, the adjustment of root_block_x and root_block_y needs the workaround with global intermediate variables
 INTERMEDIATE_BLOCK_X = 0
@@ -62,8 +69,14 @@ sub draw_block(block_x, block_y)
     fill rectangle FIELD_OFFSET_X+block_x*BLOCK_WIDTH, FIELD_OFFSET_Y+block_y*BLOCK_WIDTH to FIELD_OFFSET_X+block_x*BLOCK_WIDTH+BLOCK_WIDTH, FIELD_OFFSET_Y+block_y*BLOCK_WIDTH+BLOCK_WIDTH
 end sub
 
+sub draw_preview_block(block_x, block_y)
+    color 155,155,200
+    fill rectangle FIELD_OFFSET_X+FIELD_WIDTH+PREVIEW_WINDOW_WIDTH/2+block_x*BLOCK_WIDTH, FIELD_OFFSET_Y+PREVIEW_WINDOW_HEIGHT/2+BLOCK_WIDTH+block_y*BLOCK_WIDTH to FIELD_OFFSET_X+FIELD_WIDTH+PREVIEW_WINDOW_WIDTH/2+block_x*BLOCK_WIDTH+BLOCK_WIDTH, FIELD_OFFSET_Y+PREVIEW_WINDOW_HEIGHT/2+BLOCK_WIDTH+block_y*BLOCK_WIDTH+BLOCK_WIDTH
+end sub
+
 
 sub clear_figure(block_x, block_y, figure())
+    local i
     for i=0 to arraysize(figure(), 1)
         if figure(i) = 0 then
             clear_block(block_x, block_y)
@@ -82,6 +95,7 @@ end sub
 
 
 sub draw_figure(block_x, block_y, figure())
+    local i
     for i=0 to arraysize(figure(), 1)
         if figure(i) = 0 then
             draw_block(block_x, block_y)
@@ -94,6 +108,45 @@ sub draw_figure(block_x, block_y, figure())
         elsif figure(i) = 3 then
             block_y = block_y - 1
             draw_block(block_x, block_y)
+        fi
+    next
+    
+end sub
+
+sub display_preview_figure(next_figure_number)
+    local next_figure_root_block_x
+    local next_figure_root_block_y
+    local next_figure(4)
+    
+    choose_figure(next_figure(), next_figure_number)
+    
+    next_figure_root_block_x = set_root_block_x(PREVIEW_START_X, next_figure_number)
+    next_figure_root_block_y = set_root_block_y(PREVIEW_START_Y, next_figure_number)
+
+    REM clear the preview window
+    color 11,11,51
+    fill rectangle FIELD_OFFSET_X+FIELD_WIDTH+PREVIEW_WINDOW_WIDTH/2, FIELD_OFFSET_Y+PREVIEW_WINDOW_HEIGHT/2 to FIELD_OFFSET_X+FIELD_WIDTH+PREVIEW_WINDOW_WIDTH/2+PREVIEW_WINDOW_WIDTH, FIELD_OFFSET_Y+PREVIEW_WINDOW_HEIGHT/2+PREVIEW_WINDOW_HEIGHT
+    
+    REM draw the next figure
+    color 150,150,150
+    draw_preview_figure(next_figure_root_block_x, next_figure_root_block_y, next_figure())
+    
+end sub
+
+sub draw_preview_figure(block_x, block_y, preview_figure())
+    local i
+    for i=0 to arraysize(preview_figure(), 1)
+        if preview_figure(i) = 0 then
+            draw_preview_block(block_x, block_y)
+        elsif preview_figure(i) = 1 then
+            block_x = block_x + 1
+            draw_preview_block(block_x, block_y)
+        elsif preview_figure(i) = 2 then
+            block_x = block_x - 1
+            draw_preview_block(block_x, block_y)
+        elsif preview_figure(i) = 3 then
+            block_y = block_y - 1
+            draw_preview_block(block_x, block_y)
         fi
     next
     
@@ -702,18 +755,28 @@ sub main()
     REM draw field border
     color 150,150,150
     rectangle FIELD_OFFSET_X-1, FIELD_OFFSET_Y-1 to FIELD_OFFSET_X+FIELD_WIDTH+1, FIELD_OFFSET_Y+FIELD_HEIGHT+1
+    REM draw next figure window
+    rectangle FIELD_OFFSET_X+FIELD_WIDTH+PREVIEW_WINDOW_WIDTH/2-1, FIELD_OFFSET_Y+PREVIEW_WINDOW_HEIGHT/2-1 to FIELD_OFFSET_X+FIELD_WIDTH+PREVIEW_WINDOW_WIDTH/2+PREVIEW_WINDOW_WIDTH+1, FIELD_OFFSET_Y+PREVIEW_WINDOW_HEIGHT/2+PREVIEW_WINDOW_HEIGHT+1
     
     local figure_number
     local figure(4)
+    local next_figure_number
+    
+    next_figure_number = int(ran(19))
     
     local i
     
 #   "while not game over"-LOOP
     while(1=1)
         
-        figure_number = int(ran(19))
+        figure_number = next_figure_number
+        next_figure_number = int(ran(19))
+        
+        display_preview_figure(next_figure_number)
+        
 #        figure_number = 15
-        print "figure_number: ",str$(figure_number)
+#        print "figure_number: ",str$(figure_number)
+#        print "next_figure_number: ",str$(next_figure_number)
         
 # arrays are passed by reference to subroutines; no need to return the array
         choose_figure(figure(), figure_number)
@@ -765,8 +828,6 @@ sub main()
                         exit
                     fi
                 fi
-                print "keystroke: ",keystroke$
-                print "i: ",str$(i)
             next
             if root_block_y < 19 and is_move_ok(figure(), root_block_x, root_block_y+1) then
                 clear_figure(root_block_x, root_block_y, figure())
