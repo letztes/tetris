@@ -4,17 +4,12 @@
 
 # TODO
 # FIXES:
-# find out why block is not going down while keystrokes are read repeatedly (>10 subsequent keystrokes)
-# adjust set_root_block_y to the later added bricks
-# FIXED: When new brick is introduced, sometimes MATRIX-index 2 is -1. Program crashes even before the brick is drawn. The problem was that in the subroutine set_root_block_y() were missing the entries for the initial y-values for the (later added) S-bricks. So they were set to high.
+# Fix that brick was not going down while keystrokes were read repeatedly (>10 subsequent keystrokes). The reason was that in the for i=0 to 10 loop some subroutines were called in which another iterator called i must have been modified/reset so it never came to 10. Fixed with "local" definition.
 #
 # REFACTORING
-# Add comments in the rotate_clockwise() sub, to be obvious which part does what
 # Make rotate_clockwise() more compact, there is to much repeating code
 #
 # FEATURES
-# Define rotated brick views for the remaining S-brick and the T-brick
-# Brickrotation for all bricks
 # Deletion of complete lines
 # Brickrotation counterclockwise
 # Different colors in different bricks
@@ -710,6 +705,9 @@ sub main()
     
     local figure_number
     local figure(4)
+    
+    local i
+    
 #   "while not game over"-LOOP
     while(1=1)
         
@@ -767,6 +765,8 @@ sub main()
                         exit
                     fi
                 fi
+                print "keystroke: ",keystroke$
+                print "i: ",str$(i)
             next
             if root_block_y < 19 and is_move_ok(figure(), root_block_x, root_block_y+1) then
                 clear_figure(root_block_x, root_block_y, figure())
