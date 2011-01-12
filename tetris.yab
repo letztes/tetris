@@ -6,7 +6,7 @@
 # License: Do what you want with this code.
 
 # TODO
-# FIXES: 
+# FIXES:
 #
 # REFACTORING
 # Make rotate_clockwise() more compact, there is to much repeating code
@@ -14,14 +14,22 @@
 # Bring all the subroutines arguments in a consistent order: (figure_number, figure(), root_block_x, root_block_y)
 #
 # FEATURES
+# Deletion of complete lines:
+#   First the range of block_y till block_y-3 is checked for complete lines
+#   Then all the complete lines are deleted
+#   Then wait one second
+#   Then all the lines above the deleted lines are dropped one step, beginning
+#   with the lowest. When the "dropping wave" reaches the blocks above the
+#   next higher gap, the dropping step is incremented. And so on. The gaps are
+#   stored in an array.
+#   
 # Displaying the keydescription, i.g. "Esc for exit"
-# Deletion of complete lines
 # Brickrotation counterclockwise
 # Counting up levels with each 10 completed lines and gaining speed
 # Counting points
 #
 # DONE
-# Add preview of next brick
+# Shrink the window size to 640x512
 
 dim BLOCK_COLOR(4)
 dim rotated_figure(4)
@@ -30,18 +38,18 @@ COLUMNS = 10
 ROWS = 20
 
 # measures in pixels
-WINDOW_WIDTH = 768 rem PAL TV norm. More or less.
-WINDOW_HEIGHT = 576
+WINDOW_WIDTH = 640 rem PAL TV norm. More or less.
+WINDOW_HEIGHT = 512
 BLOCK_WIDTH = 25
 FIELD_OFFSET_X = 200
-FIELD_OFFSET_Y = 50
+FIELD_OFFSET_Y = 5
 FIELD_WIDTH = BLOCK_WIDTH * COLUMNS
 FIELD_HEIGHT = BLOCK_WIDTH * ROWS
 
 PREVIEW_WINDOW_WIDTH  = BLOCK_WIDTH*6
 PREVIEW_WINDOW_HEIGHT = BLOCK_WIDTH*6
-PREVIEW_WINDOW_OFFSET_X = FIELD_OFFSET_X+FIELD_WIDTH+PREVIEW_WINDOW_WIDTH/2
-PREVIEW_WINDOW_OFFSET_Y = FIELD_OFFSET_Y+PREVIEW_WINDOW_HEIGHT/2+BLOCK_WIDTH
+PREVIEW_WINDOW_OFFSET_X = FIELD_OFFSET_X+FIELD_WIDTH+BLOCK_WIDTH
+PREVIEW_WINDOW_OFFSET_Y = FIELD_OFFSET_Y+PREVIEW_WINDOW_HEIGHT/2+BLOCK_WIDTH*2
 
 # measures in blocks
 dim MATRIX(10,20)
@@ -84,7 +92,7 @@ sub draw_block(block_x, block_y, figure_number, preview)
     
     if preview=1 then
         offset_x = PREVIEW_WINDOW_OFFSET_X
-        offset_y = PREVIEW_WINDOW_OFFSET_Y
+        offset_y = PREVIEW_WINDOW_OFFSET_Y+BLOCK_WIDTH
     else
         offset_x = FIELD_OFFSET_X
         offset_y = FIELD_OFFSET_Y
@@ -172,7 +180,7 @@ sub display_preview_figure(next_figure_number)
 
     REM clear the preview window
     color 11,11,51
-    fill rectangle FIELD_OFFSET_X+FIELD_WIDTH+PREVIEW_WINDOW_WIDTH/2, FIELD_OFFSET_Y+PREVIEW_WINDOW_HEIGHT/2 to FIELD_OFFSET_X+FIELD_WIDTH+PREVIEW_WINDOW_WIDTH/2+PREVIEW_WINDOW_WIDTH, FIELD_OFFSET_Y+PREVIEW_WINDOW_HEIGHT/2+PREVIEW_WINDOW_HEIGHT
+    fill rectangle PREVIEW_WINDOW_OFFSET_X, PREVIEW_WINDOW_OFFSET_Y to PREVIEW_WINDOW_OFFSET_X+PREVIEW_WINDOW_WIDTH, PREVIEW_WINDOW_OFFSET_Y+PREVIEW_WINDOW_HEIGHT
     
     REM draw the next figure
     color 150,150,150
@@ -787,7 +795,7 @@ sub main()
     color 150,150,150
     rectangle FIELD_OFFSET_X-1, FIELD_OFFSET_Y-1 to FIELD_OFFSET_X+FIELD_WIDTH+1, FIELD_OFFSET_Y+FIELD_HEIGHT+1
     REM draw next figure window
-    rectangle FIELD_OFFSET_X+FIELD_WIDTH+PREVIEW_WINDOW_WIDTH/2-1, FIELD_OFFSET_Y+PREVIEW_WINDOW_HEIGHT/2-1 to FIELD_OFFSET_X+FIELD_WIDTH+PREVIEW_WINDOW_WIDTH/2+PREVIEW_WINDOW_WIDTH+1, FIELD_OFFSET_Y+PREVIEW_WINDOW_HEIGHT/2+PREVIEW_WINDOW_HEIGHT+1
+    rectangle PREVIEW_WINDOW_OFFSET_X-1, PREVIEW_WINDOW_OFFSET_Y-1 to PREVIEW_WINDOW_OFFSET_X+PREVIEW_WINDOW_WIDTH+1, PREVIEW_WINDOW_OFFSET_Y+PREVIEW_WINDOW_HEIGHT+1
     
     local figure_number
     local figure(4)
