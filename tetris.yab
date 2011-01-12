@@ -22,6 +22,9 @@
 #   with the lowest. When the "dropping wave" reaches the blocks above the
 #   next higher gap, the dropping step is incremented. And so on. The gaps are
 #   stored in an array.
+#
+#   MATRIX() needs a third dimension, the figure_number for indicating the
+#   style of the block
 #   
 # Displaying the keydescription, i.g. "Esc for exit"
 # Brickrotation counterclockwise
@@ -98,10 +101,11 @@ sub draw_block(block_x, block_y, figure_number, preview)
         offset_y = FIELD_OFFSET_Y
     fi
     
-    MATRIX(block_x, block_y) = -1
+    MATRIX(block_x, block_y) = -1 * figure_number
     switch figure_number
-        case 3: case 4: case 5: case 6: case 13: case 14: inner_color$=bright_blue$: border_color$=bright_blue$: break
-        case 7: case 8: case 9: case 10: case 11: case 12: inner_color$=dark_blue$: border_color$=dark_blue$: break
+        case 0: return REM empty block
+        case 4: case 5: case 6: case 7: case 14: case 15: inner_color$=bright_blue$: border_color$=bright_blue$: break
+        case 8: case 9: case 10: case 11: case 12: case 13: inner_color$=dark_blue$: border_color$=dark_blue$: break
         default: inner_color$=shining_color$: border_color$=dark_blue$
     end switch
     color inner_color$
@@ -212,21 +216,21 @@ end sub
 
 sub choose_figure(figure(), figure_number)
     
-    if figure_number = 0 then          REM horizontal stick
+    if figure_number = 1 then          REM horizontal stick
         figure(0) = 0
         figure(1) = 1
         figure(2) = 1
         figure(3) = 1
         figure(4) = 0
         return 1
-    elsif figure_number = 1 then       REM vertical stick
+    elsif figure_number = 2 then       REM vertical stick
         figure(0) = 0
         figure(1) = 3
         figure(2) = 3
         figure(3) = 3
         figure(4) = 0
         return 1
-    elsif figure_number = 2 then       REM square block
+    elsif figure_number = 3 then       REM square block
         figure(0) = 0
         figure(1) = 1
         figure(2) = 3
@@ -235,28 +239,28 @@ sub choose_figure(figure(), figure_number)
         return 1
         
         
-    elsif figure_number = 3 then       REM bottom-left nose down horizontal L
+    elsif figure_number = 4 then       REM bottom-left nose down horizontal L
         figure(0) = 0
         figure(1) = 3
         figure(2) = 1
         figure(3) = 1
         figure(4) = 0
         return 1
-    elsif figure_number = 4 then       REM bottom-right nose top left vertical L
+    elsif figure_number = 5 then       REM bottom-right nose top left vertical L
         figure(0) = 0
         figure(1) = 3
         figure(2) = 3
         figure(3) = 2
         figure(4) = 0
         return 1
-    elsif figure_number = 5 then       REM bottom-left nose up horizontal L
+    elsif figure_number = 6 then       REM bottom-left nose up horizontal L
         figure(0) = 0
         figure(1) = 1
         figure(2) = 1
         figure(3) = 3
         figure(4) = 0
         return 1
-    elsif figure_number = 6 then       REM nose bottom right vertical L
+    elsif figure_number = 7 then       REM nose bottom right vertical L
         figure(0) = 0
         figure(1) = 2
         figure(2) = 3
@@ -266,28 +270,28 @@ sub choose_figure(figure(), figure_number)
         
         
         
-    elsif figure_number = 7 then       REM bottom-right nose down horizontal L
+    elsif figure_number = 8 then       REM bottom-right nose down horizontal L
         figure(0) = 0
         figure(1) = 3
         figure(2) = 2
         figure(3) = 2
         figure(4) = 0
         return 1
-    elsif figure_number = 8 then       REM nose bottom left vertical L
+    elsif figure_number = 9 then       REM nose bottom left vertical L
         figure(0) = 0
         figure(1) = 1
         figure(2) = 3
         figure(3) = 3
         figure(4) = 0
         return 1
-    elsif figure_number = 9 then       REM bottom-right nose up left horizontal L
+    elsif figure_number = 10 then       REM bottom-right nose up left horizontal L
         figure(0) = 0
         figure(1) = 2
         figure(2) = 2
         figure(3) = 3
         figure(4) = 0
         return 1
-    elsif figure_number = 10 then       REM bottom-left nose top right vertical L
+    elsif figure_number = 11 then       REM bottom-left nose top right vertical L
         figure(0) = 0
         figure(1) = 3
         figure(2) = 3
@@ -296,14 +300,14 @@ sub choose_figure(figure(), figure_number)
         return 1
         
         
-    elsif figure_number = 11 then       REM left bottom horizontal S-block
+    elsif figure_number = 12 then       REM left bottom horizontal S-block
         figure(0) = 0
         figure(1) = 1
         figure(2) = 3
         figure(3) = 1
         figure(4) = 0
         return 1
-    elsif figure_number = 12 then      REM right bottom vertical S-block
+    elsif figure_number = 13 then      REM right bottom vertical S-block
         figure(0) = 0
         figure(1) = 3
         figure(2) = 2
@@ -312,14 +316,14 @@ sub choose_figure(figure(), figure_number)
         return 1
         
         
-    elsif figure_number = 13 then       REM right bottom horizontal S-block
+    elsif figure_number = 14 then       REM right bottom horizontal S-block
         figure(0) = 0
         figure(1) = 2
         figure(2) = 3
         figure(3) = 2
         figure(4) = 0
         return 1
-    elsif figure_number = 14 then       REM left bottom vertical S-block
+    elsif figure_number = 15 then       REM left bottom vertical S-block
         figure(0) = 0
         figure(1) = 3
         figure(2) = 1
@@ -327,28 +331,28 @@ sub choose_figure(figure(), figure_number)
         figure(4) = 0
         return 1
         
-    elsif figure_number = 15 then      REM nose top horizontal T-block
+    elsif figure_number = 16 then      REM nose top horizontal T-block
         figure(0) = 0
         figure(1) = 1
         figure(2) = 1
         figure(3) = 2
         figure(4) = 3
         return 1
-    elsif figure_number = 16 then      REM nose right vertical T-block
+    elsif figure_number = 17 then      REM nose right vertical T-block
         figure(0) = 0
         figure(1) = 3
         figure(2) = 1
         figure(3) = 2
         figure(4) = 3
         return 1
-    elsif figure_number = 17 then      REM nose down horizontal T-block
+    elsif figure_number = 18 then      REM nose down horizontal T-block
         figure(0) = 0
         figure(1) = 3
         figure(2) = 2
         figure(3) = 1
         figure(4) = 1
         return 1
-    elsif figure_number = 18 then      REM nose left vertical T-block
+    elsif figure_number = 19 then      REM nose left vertical T-block
         figure(0) = 0
         figure(1) = 3
         figure(2) = 2
@@ -361,24 +365,24 @@ end sub
 
 sub set_root_block_x(root_block_x, figure_number)
     switch figure_number
-        case 0: return root_block_x-2  REM horizontal stick
-        case 2: return root_block_x-1  REM square block
-        case 3: return root_block_x-1  REM bottom-left horizontal L
-        case 4: return root_block_x+1  REM L
-        case 5: return root_block_x-1  REM L
-        case 6: return root_block_x+1  REM L
-        case 7: return root_block_x+1  REM right bottom horizontal S-block
-        case 8: return root_block_x-1  REM L
-        case 9: return root_block_x+1  REM L
-        case 10: return root_block_x-1 REM L
+        case 1: return root_block_x-2  REM horizontal stick
+        case 3: return root_block_x-1  REM square block
+        case 4: return root_block_x-1  REM bottom-left horizontal L
+        case 5: return root_block_x+1  REM L
+        case 6: return root_block_x-1  REM L
+        case 7: return root_block_x+1  REM L
+        case 8: return root_block_x+1  REM right bottom horizontal S-block
+        case 9: return root_block_x-1  REM L
+        case 10: return root_block_x+1  REM L
+        case 11: return root_block_x-1 REM L
         
-        case 11: return root_block_x-1 REM left bottom horizontal S-block
-        case 12: return root_block_x+1 REM right bottom vertical S-block
-        case 13: return root_block_x   REM right bottom horizontal S-block
-        case 14: return root_block_x   REM left bottom vertical S-block
+        case 12: return root_block_x-1 REM left bottom horizontal S-block
+        case 13: return root_block_x+1 REM right bottom vertical S-block
+        case 14: return root_block_x   REM right bottom horizontal S-block
+        case 15: return root_block_x   REM left bottom vertical S-block
         
-        case 15: return root_block_x-1 REM nose top horizontal T-block
-        case 17: return root_block_x-1 REM nose down horizontal T-block
+        case 16: return root_block_x-1 REM nose top horizontal T-block
+        case 18: return root_block_x-1 REM nose down horizontal T-block
         default: return root_block_x
     end switch
 end sub
@@ -386,36 +390,26 @@ end sub
 
 sub set_root_block_y(root_block_y, figure_number)
     switch figure_number
-        case 0: return root_block_y    REM horizontal stick
-        case 1: return root_block_y+3  REM vertical stick
+        case 1: return root_block_y    REM horizontal stick
+        case 2: return root_block_y+3  REM vertical stick
         
-        case 4: return root_block_y+2  REM vertical L
-        case 6: return root_block_y+2  REM vertical L
-        case 8: return root_block_y+2  REM vertical L
-        case 10: return root_block_y+2 REM vertical L
+        case 5: return root_block_y+2  REM vertical L
+        case 7: return root_block_y+2  REM vertical L
+        case 9: return root_block_y+2  REM vertical L
+        case 11: return root_block_y+2 REM vertical L
         
-        case 12: return root_block_y+2 REM vertical S-block
-        case 14: return root_block_y+2 REM vertical S-block
+        case 13: return root_block_y+2 REM vertical S-block
+        case 15: return root_block_y+2 REM vertical S-block
         
-        case 16: return root_block_y+2 REM nose left vertical T-block
-        case 18: return root_block_y+2 REM nose right vertical T-block
+        case 17: return root_block_y+2 REM nose left vertical T-block
+        case 19: return root_block_y+2 REM nose right vertical T-block
         default: return root_block_y+1
     end switch
 end sub
 
 
-sub is_turn_over(root_block_x, root_block_y, figure_number)
-    if root_block_y = 20 or MATRIX(root_block_x, root_block_y) = 2 then
-        clear_figure(root_block_x, root_block_y, figure())
-        root_block_y = root_block_y - 1
-        draw_figure(root_block_x, root_block_y, figure(), figure_number)
-        return 1
-    fi
-    return 0
-end sub
-
-
 sub pause_game()
+    local keystroke$
     keystroke$ = inkey$()
     if keystroke$ = "p" then
         return 1
@@ -434,6 +428,7 @@ end sub
 
 
 sub is_move_ok(figure(), block_x, block_y)
+    local i
     for i=0 to arraysize(figure(), 1)
         if figure(i) = 1 then
             block_x = block_x + 1
@@ -453,6 +448,17 @@ end sub
 
 
 sub turn_is_over(block_x, block_y, figure())
+# This subroutine is divided into two parts
+    local i
+    local complete_lines(3) REM array to store the y-coordinates of complete lines
+    local block_y_to_check
+    local block_x_to_check
+    local block_y_original REM needed for checking the lines
+    local dropped_gaps REM counter variable to adjust the subsequent dropping
+    local dropping REM Flag variable to exit or not the sub
+    block_y_original = block_y
+# First part:
+# First fixate the current brick
     for i=0 to arraysize(figure(), 1)
         if figure(i) = 1 then
             block_x = block_x + 1
@@ -461,7 +467,54 @@ sub turn_is_over(block_x, block_y, figure())
         elsif figure(i) = 3 then
             block_y = block_y - 1
         fi
-        MATRIX(block_x, block_y) = 1
+        MATRIX(block_x, block_y) = abs(MATRIX(block_x, block_y))
+    next
+# Second part:
+# Check if some lines are compelete and if so remove them in the next step
+    i = 0
+    for i=0 to 3 REM the rows
+        for j=0 to 9 REM the columns
+            if MATRIX(j, block_y_original-i) = 0 then
+                goto CHECK_LINES_NEXT
+            fi
+        next
+        dropping = 1
+        complete_lines(i)=block_y_original-i
+        label CHECK_LINES_NEXT
+        i=i+1
+    next
+# If no lines were completed, exit the subroutine
+    if dropping = 0 then
+        return
+    fi
+    
+# Remove the lines
+    for i=0 to 3
+        if complete_lines(i)=0 then
+            goto REMOVE_LINES_NEXT
+        else
+            for block_x_to_clear=0 to 9
+                clear_block(block_x_to_clear, complete_lines(i))
+            next
+            dropped_gaps = dropped_gaps + 1 
+        fi
+        label REMOVE_LINES_NEXT
+    next
+# Wait 1 sec
+    wait 1
+    
+# Drop the lines above
+    for i=block_y_original to 1+dropped_gaps step -1
+        for block_x_to_clear=0 to 9
+            clear_block(block_x_to_clear, i)
+            figure_number_above = abs(MATRIX(block_x_to_clear, i-dropped_gaps))
+            print "Block_x: ",str$(block_x_to_clear)," figure_number_above: ",str$(figure_number_above)
+            draw_block(block_x_to_clear, i, figure_number_above)
+            MATRIX(block_x_to_clear, i) = MATRIX(block_x_to_clear, i) * -1
+        next
+        print "Block_y: ",str$(i),"Block_y_above: ",str$(i-dropped_gaps)
+#        inkey$
+        label DROP_LINES_NEXT
     next
 end sub
 
@@ -473,8 +526,8 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
     INTERMEDIATE_BLOCK_Y = root_block_y
     
     REM horizontal stick
-    if figure_number=0 then
-        figure_number_rotated = 1
+    if figure_number=1 then
+        figure_number_rotated = 2
         choose_figure(rotated_figure(), figure_number_rotated)
         if is_move_ok(rotated_figure(), root_block_x+1, root_block_y+1) then
         
@@ -490,8 +543,8 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
         fi
         
     REM vertical stick
-    elsif figure_number=1 then
-        figure_number_rotated = 0
+    elsif figure_number=2 then
+        figure_number_rotated = 1
         choose_figure(rotated_figure(), figure_number_rotated)
         if is_move_ok(rotated_figure(), root_block_x-1, root_block_y-1) then
         
@@ -509,8 +562,8 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
     REM No need to rotate the square block
     
     REM bottom-left nose down horizontal L
-    elsif figure_number=3 then
-        figure_number_rotated = 4
+    elsif figure_number=4 then
+        figure_number_rotated = 5
         choose_figure(rotated_figure(), figure_number_rotated)
         if is_move_ok(rotated_figure(), root_block_x+1, root_block_y) then
         
@@ -526,8 +579,8 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
         fi
         
     REM bottom-right nose top left vertical L
-    elsif figure_number=4 then
-        figure_number_rotated = 5
+    elsif figure_number=5 then
+        figure_number_rotated = 6
         choose_figure(rotated_figure(), figure_number_rotated)
         if is_move_ok(rotated_figure(), root_block_x-1, root_block_y) then
         
@@ -543,8 +596,8 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
         fi
         
     REM bottom-left nose up horizontal L
-    elsif figure_number=5 then
-        figure_number_rotated = 6
+    elsif figure_number=6 then
+        figure_number_rotated = 7
         choose_figure(rotated_figure(), figure_number_rotated)
         if is_move_ok(rotated_figure(), root_block_x+2, root_block_y) then
         
@@ -560,8 +613,8 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
         fi
         
     REM nose bottom right vertical L
-    elsif figure_number=6 then
-        figure_number_rotated = 3
+    elsif figure_number=7 then
+        figure_number_rotated = 4
         choose_figure(rotated_figure(), figure_number_rotated)
         if is_move_ok(rotated_figure(), root_block_x-2, root_block_y) then
         
@@ -577,8 +630,8 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
         fi
         
     REM bottom-right nose down horizontal L
-    elsif figure_number=7 then
-        figure_number_rotated = 8
+    elsif figure_number=8 then
+        figure_number_rotated = 9
         choose_figure(rotated_figure(), figure_number_rotated)
         if is_move_ok(rotated_figure(), root_block_x-2, root_block_y) then
         
@@ -594,8 +647,8 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
         fi
         
     REM nose bottom left vertical L
-    elsif figure_number=8 then
-        figure_number_rotated = 9
+    elsif figure_number=9 then
+        figure_number_rotated = 10
         choose_figure(rotated_figure(), figure_number_rotated)
         if is_move_ok(rotated_figure(), root_block_x+2, root_block_y) then
         
@@ -611,57 +664,7 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
         fi
         
     REM bottom-right nose up left horizontal L
-    elsif figure_number=9 then
-        figure_number_rotated = 10
-        choose_figure(rotated_figure(), figure_number_rotated)
-        if is_move_ok(rotated_figure(), root_block_x-1, root_block_y) then
-        
-            clear_figure(root_block_x, root_block_y, figure())
-            
-            INTERMEDIATE_BLOCK_X = root_block_x-1
-            INTERMEDIATE_BLOCK_Y = root_block_y
-            figure_number = figure_number_rotated
-            choose_figure(figure(), figure_number)
-            
-            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
-            
-        fi
-        
-    REM bottom-left nose top right vertical L
     elsif figure_number=10 then
-        figure_number_rotated = 7
-        choose_figure(rotated_figure(), figure_number_rotated)
-        if is_move_ok(rotated_figure(), root_block_x+1, root_block_y) then
-        
-            clear_figure(root_block_x, root_block_y, figure())
-            
-            INTERMEDIATE_BLOCK_X = root_block_x+1
-            INTERMEDIATE_BLOCK_Y = root_block_y
-            figure_number = figure_number_rotated
-            choose_figure(figure(), figure_number)
-            
-            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
-            
-        fi
-    REM left bottom horizontal S-block    
-    elsif figure_number=11 then
-        figure_number_rotated = 12
-        choose_figure(rotated_figure(), figure_number_rotated)
-        if is_move_ok(rotated_figure(), root_block_x+1, root_block_y) then
-        
-            clear_figure(root_block_x, root_block_y, figure())
-            
-            INTERMEDIATE_BLOCK_X = root_block_x+1
-            INTERMEDIATE_BLOCK_Y = root_block_y
-            figure_number = figure_number_rotated
-            choose_figure(figure(), figure_number)
-            
-            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
-            
-        fi
-        
-    REM right bottom vertical S-block
-    elsif figure_number=12 then
         figure_number_rotated = 11
         choose_figure(rotated_figure(), figure_number_rotated)
         if is_move_ok(rotated_figure(), root_block_x-1, root_block_y) then
@@ -677,15 +680,15 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
             
         fi
         
-    REM right bottom horizontal S-block    
-    elsif figure_number=13 then
-        figure_number_rotated = 14
+    REM bottom-left nose top right vertical L
+    elsif figure_number=11 then
+        figure_number_rotated = 8
         choose_figure(rotated_figure(), figure_number_rotated)
-        if is_move_ok(rotated_figure(), root_block_x-1, root_block_y) then
+        if is_move_ok(rotated_figure(), root_block_x+1, root_block_y) then
         
             clear_figure(root_block_x, root_block_y, figure())
             
-            INTERMEDIATE_BLOCK_X = root_block_x-1
+            INTERMEDIATE_BLOCK_X = root_block_x+1
             INTERMEDIATE_BLOCK_Y = root_block_y
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
@@ -693,9 +696,8 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
             draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
             
         fi
-        
-    REM left bottom vertical S-block
-    elsif figure_number=14 then
+    REM left bottom horizontal S-block    
+    elsif figure_number=12 then
         figure_number_rotated = 13
         choose_figure(rotated_figure(), figure_number_rotated)
         if is_move_ok(rotated_figure(), root_block_x+1, root_block_y) then
@@ -711,9 +713,60 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
             
         fi
         
-    REM left bottom nose top horizontal T-brick
+    REM right bottom vertical S-block
+    elsif figure_number=13 then
+        figure_number_rotated = 12
+        choose_figure(rotated_figure(), figure_number_rotated)
+        if is_move_ok(rotated_figure(), root_block_x-1, root_block_y) then
+        
+            clear_figure(root_block_x, root_block_y, figure())
+            
+            INTERMEDIATE_BLOCK_X = root_block_x-1
+            INTERMEDIATE_BLOCK_Y = root_block_y
+            figure_number = figure_number_rotated
+            choose_figure(figure(), figure_number)
+            
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
+            
+        fi
+        
+    REM right bottom horizontal S-block    
+    elsif figure_number=14 then
+        figure_number_rotated = 15
+        choose_figure(rotated_figure(), figure_number_rotated)
+        if is_move_ok(rotated_figure(), root_block_x-1, root_block_y) then
+        
+            clear_figure(root_block_x, root_block_y, figure())
+            
+            INTERMEDIATE_BLOCK_X = root_block_x-1
+            INTERMEDIATE_BLOCK_Y = root_block_y
+            figure_number = figure_number_rotated
+            choose_figure(figure(), figure_number)
+            
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
+            
+        fi
+        
+    REM left bottom vertical S-block
     elsif figure_number=15 then
-        figure_number_rotated = 16
+        figure_number_rotated = 14
+        choose_figure(rotated_figure(), figure_number_rotated)
+        if is_move_ok(rotated_figure(), root_block_x+1, root_block_y) then
+        
+            clear_figure(root_block_x, root_block_y, figure())
+            
+            INTERMEDIATE_BLOCK_X = root_block_x+1
+            INTERMEDIATE_BLOCK_Y = root_block_y
+            figure_number = figure_number_rotated
+            choose_figure(figure(), figure_number)
+            
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
+            
+        fi
+        
+    REM left bottom nose top horizontal T-brick
+    elsif figure_number=16 then
+        figure_number_rotated = 17
         choose_figure(rotated_figure(), figure_number_rotated)
         if is_move_ok(rotated_figure(), root_block_x+1, root_block_y) then
         
@@ -729,23 +782,6 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
         fi
         
     REM nose right vertical T-block
-    elsif figure_number=16 then
-        figure_number_rotated = 17
-        choose_figure(rotated_figure(), figure_number_rotated)
-        if is_move_ok(rotated_figure(), root_block_x, root_block_y) then
-        
-            clear_figure(root_block_x, root_block_y, figure())
-            
-            INTERMEDIATE_BLOCK_X = root_block_x
-            INTERMEDIATE_BLOCK_Y = root_block_y
-            figure_number = figure_number_rotated
-            choose_figure(figure(), figure_number)
-            
-            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
-            
-        fi
-        
-    REM nose down horizontal T-block
     elsif figure_number=17 then
         figure_number_rotated = 18
         choose_figure(rotated_figure(), figure_number_rotated)
@@ -762,9 +798,26 @@ sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
             
         fi
         
-    REM nose left vertical T-block
+    REM nose down horizontal T-block
     elsif figure_number=18 then
-        figure_number_rotated = 15
+        figure_number_rotated = 19
+        choose_figure(rotated_figure(), figure_number_rotated)
+        if is_move_ok(rotated_figure(), root_block_x, root_block_y) then
+        
+            clear_figure(root_block_x, root_block_y, figure())
+            
+            INTERMEDIATE_BLOCK_X = root_block_x
+            INTERMEDIATE_BLOCK_Y = root_block_y
+            figure_number = figure_number_rotated
+            choose_figure(figure(), figure_number)
+            
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
+            
+        fi
+        
+    REM nose left vertical T-block
+    elsif figure_number=19 then
+        figure_number_rotated = 16
         choose_figure(rotated_figure(), figure_number_rotated)
         if is_move_ok(rotated_figure(), root_block_x-1, root_block_y) then
         
@@ -801,7 +854,7 @@ sub main()
     local figure(4)
     local next_figure_number
     
-    next_figure_number = int(ran(19))
+    next_figure_number = int(ran(19))+1
     
     local i
     
@@ -809,7 +862,7 @@ sub main()
     while(1=1)
         
         figure_number = next_figure_number
-        next_figure_number = int(ran(19))
+        next_figure_number = int(ran(19))+1 REM 0 means empty
         
         display_preview_figure(next_figure_number)
         
