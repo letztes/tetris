@@ -29,7 +29,7 @@
 # Counting points
 #
 # DONE
-# Shrink the window size to 640x512
+# 
 
 dim BLOCK_COLOR(4)
 dim rotated_figure(4)
