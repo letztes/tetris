@@ -1,38 +1,35 @@
 #!/usr/bin/basic
-# requires yabasic 2.7x, download at www.yabasic.de
+REM requires yabasic 2.7x, download at www.yabasic.de
 
-# Author:  Artur Spengler
-# Website: www.github.com/letztes/tetris
-# License: Do what you want with this code.
+REM Author:  Artur Spengler
+REM Website: www.github.com/letztes/tetris
+REM License: Do what you want with this code.
 
-# TODO
-# FIXES:
-#
-# REFACTORING
-# Make rotate_clockwise() more compact, there is to much repeating code
-# Define all the nonglobal variables as locals
-# Bring all the subroutines arguments in a consistent order: (figure_number, figure(), root_block_x, root_block_y)
-#
-# FEATURES
-# Deletion of complete lines:
-#   First the range of block_y till block_y-3 is checked for complete lines
-#   Then all the complete lines are deleted
-#   Then wait one second
-#   Then all the lines above the deleted lines are dropped one step, beginning
-#   with the lowest. When the "dropping wave" reaches the blocks above the
-#   next higher gap, the dropping step is incremented. And so on. The gaps are
-#   stored in an array.
-#
-#   MATRIX() needs a third dimension, the figure_number for indicating the
-#   style of the block
-#   
-# Displaying the keydescription, i.g. "Esc for exit"
-# Brickrotation counterclockwise
-# Counting up levels with each 10 completed lines and gaining speed
-# Counting points
-#
-# DONE
-# 
+REM TODO
+REM FIXES:
+REM
+REM REFACTORING
+REM Make rotate_clockwise() more compact, there is too much repeating code
+REM Define all the nonglobal variables as locals
+REM Bring all the subroutines arguments in a consistent order: (figure_number, figure(), root_block_x, root_block_y)
+REM
+REM FEATURES
+REM Deletion of complete lines:
+REM   First the range of block_y till block_y-3 is checked for complete lines
+REM   Then all the complete lines are deleted
+REM   Then wait one second
+REM   Then all the lines above the deleted lines are dropped one step, beginning
+REM   with the lowest. When the "dropping wave" reaches the blocks above the
+REM   next higher gap, the dropping step is incremented. And so on. The gaps are
+REM   stored in an array.
+REM   
+REM Displaying the keydescription, i.g. "Esc for exit"
+REM Brickrotation counterclockwise
+REM Counting up levels with each 10 completed lines and gaining speed
+REM Counting points
+REM
+REM DONE
+REM 
 
 dim BLOCK_COLOR(4)
 dim rotated_figure(4)
@@ -40,7 +37,7 @@ dim rotated_figure(4)
 COLUMNS = 10
 ROWS = 20
 
-# measures in pixels
+REM measures in pixels
 WINDOW_WIDTH = 640 rem PAL TV norm. More or less.
 WINDOW_HEIGHT = 512
 BLOCK_WIDTH = 25
@@ -54,20 +51,20 @@ PREVIEW_WINDOW_HEIGHT = BLOCK_WIDTH*6
 PREVIEW_WINDOW_OFFSET_X = FIELD_OFFSET_X+FIELD_WIDTH+BLOCK_WIDTH
 PREVIEW_WINDOW_OFFSET_Y = FIELD_OFFSET_Y+PREVIEW_WINDOW_HEIGHT/2+BLOCK_WIDTH*2
 
-# measures in blocks
+REM measures in blocks
 dim MATRIX(10,20)
 
-# needs to be adjusted to the actual figure when necessary
+REM needs to be adjusted to the actual figure when necessary
 START_X = 5
 START_Y = 0
 PREVIEW_START_X = 3
 PREVIEW_START_Y = 0
 
-# subroutines can return only one single value. so when rotating the brick, the adjustment of root_block_x and root_block_y needs the workaround with global intermediate variables
+REM subroutines can return only one single value. so when rotating the brick, the adjustment of root_block_x and root_block_y needs the workaround with global intermediate variables
 INTERMEDIATE_BLOCK_X = 0
 INTERMEDIATE_BLOCK_y = 0
 
-# measures in seconds
+REM measures in seconds
 TIMEQUANT = 0.1
 
 
@@ -99,9 +96,9 @@ sub draw_block(block_x, block_y, figure_number, preview)
     else
         offset_x = FIELD_OFFSET_X
         offset_y = FIELD_OFFSET_Y
+        MATRIX(block_x, block_y) = -1 * figure_number
     fi
     
-    MATRIX(block_x, block_y) = -1 * figure_number
     switch figure_number
         case 0: return REM empty block
         case 4: case 5: case 6: case 7: case 14: case 15: inner_color$=bright_blue$: border_color$=bright_blue$: break
@@ -447,81 +444,9 @@ sub is_move_ok(figure(), block_x, block_y)
 end sub
 
 
-sub turn_is_over(block_x, block_y, figure())
-# This subroutine is divided into two parts
-    local i
-    local complete_lines(3) REM array to store the y-coordinates of complete lines
-    local block_y_to_check
-    local block_x_to_check
-    local block_y_original REM needed for checking the lines
-    local dropped_gaps REM counter variable to adjust the subsequent dropping
-    local dropping REM Flag variable to exit or not the sub
-    block_y_original = block_y
-# First part:
-# First fixate the current brick
-    for i=0 to arraysize(figure(), 1)
-        if figure(i) = 1 then
-            block_x = block_x + 1
-        elsif figure(i) = 2 then
-            block_x = block_x - 1
-        elsif figure(i) = 3 then
-            block_y = block_y - 1
-        fi
-        MATRIX(block_x, block_y) = abs(MATRIX(block_x, block_y))
-    next
-# Second part:
-# Check if some lines are compelete and if so remove them in the next step
-    i = 0
-    for i=0 to 3 REM the rows
-        for j=0 to 9 REM the columns
-            if MATRIX(j, block_y_original-i) = 0 then
-                goto CHECK_LINES_NEXT
-            fi
-        next
-        dropping = 1
-        complete_lines(i)=block_y_original-i
-        label CHECK_LINES_NEXT
-        i=i+1
-    next
-# If no lines were completed, exit the subroutine
-    if dropping = 0 then
-        return
-    fi
-    
-# Remove the lines
-    for i=0 to 3
-        if complete_lines(i)=0 then
-            goto REMOVE_LINES_NEXT
-        else
-            for block_x_to_clear=0 to 9
-                clear_block(block_x_to_clear, complete_lines(i))
-            next
-            dropped_gaps = dropped_gaps + 1 
-        fi
-        label REMOVE_LINES_NEXT
-    next
-# Wait 1 sec
-    wait 1
-    
-# Drop the lines above
-    for i=block_y_original to 1+dropped_gaps step -1
-        for block_x_to_clear=0 to 9
-            clear_block(block_x_to_clear, i)
-            figure_number_above = abs(MATRIX(block_x_to_clear, i-dropped_gaps))
-            print "Block_x: ",str$(block_x_to_clear)," figure_number_above: ",str$(figure_number_above)
-            draw_block(block_x_to_clear, i, figure_number_above)
-            MATRIX(block_x_to_clear, i) = MATRIX(block_x_to_clear, i) * -1
-        next
-        print "Block_y: ",str$(i),"Block_y_above: ",str$(i-dropped_gaps)
-#        inkey$
-        label DROP_LINES_NEXT
-    next
-end sub
-
-
 sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
-# global INTERMEDIATE_BLOCKS are necessary because the sub cannot return multiple values
-# local temporary_blocks come handy in this sub to make things shorter
+REM global INTERMEDIATE_BLOCKS are necessary because the sub cannot return multiple values
+REM local temporary_blocks come handy in this sub to make things shorter
     INTERMEDIATE_BLOCK_X = root_block_x
     INTERMEDIATE_BLOCK_Y = root_block_y
     
@@ -837,6 +762,12 @@ end sub
 
 
 sub main()
+
+REM Testvariables
+            local y
+            local x
+            
+            
     clear screen REM reading keystrokes with inkey$() needs 'clear screen'
     open window WINDOW_WIDTH, WINDOW_HEIGHT
     backcolor 0,0,0
@@ -858,7 +789,7 @@ sub main()
     
     local i
     
-#   "while not game over"-LOOP
+REM   "while not game over"-LOOP
     while(1=1)
         
         figure_number = next_figure_number
@@ -866,11 +797,11 @@ sub main()
         
         display_preview_figure(next_figure_number)
         
-#        figure_number = 15
-#        print "figure_number: ",str$(figure_number)
-#        print "next_figure_number: ",str$(next_figure_number)
+REM        figure_number = 15
+REM        print "figure_number: ",str$(figure_number)
+REM        print "next_figure_number: ",str$(next_figure_number)
         
-# arrays are passed by reference to subroutines; no need to return the array
+REM arrays are passed by reference to subroutines; no need to return the array
         choose_figure(figure(), figure_number)
         
         
@@ -887,7 +818,7 @@ sub main()
         root_block_y = root_block_y + 1
         draw_figure(root_block_x, root_block_y, figure(), figure_number)
                 
-#       "while figure is falling down and has not landed yet"-LOOP
+REM       "while figure is falling down and has not landed yet"-LOOP
         while(1=1)
             for i = 1 to 10
                 keystroke$ = inkey$(TIMEQUANT)
@@ -926,9 +857,17 @@ sub main()
                 root_block_y = root_block_y + 1
                 draw_figure(root_block_x, root_block_y, figure(), figure_number)
             else
+                print "root_block_y is ",str$(root_block_y)
                 turn_is_over(root_block_x, root_block_y, figure())
                 break
             fi
+            clear screen
+            for y = 0 to 19
+                for x = 0 to 9
+                    print MATRIX(x, y),
+                next
+                print ""
+            next
         wend
     wend
     game_over()
@@ -936,10 +875,105 @@ end sub
 
 main()
 
-#######################
+REM ######################
 
 
 
+
+
+sub turn_is_over(block_x, block_y, figure())
+REM This subroutine is divided into two parts
+    local i
+    local complete_lines(4) REM array to store the y-coordinates of complete lines
+    local block_y_to_check REM iterator variable
+    local block_x_to_check REM iterator variable
+    local block_y_original REM needed for checking the lines
+    local dropped_gaps REM counter variable to adjust the subsequent dropping
+    local dropping REM Flag variable to exit or not the sub
+    block_y_original = block_y
+    local y_iterator
+    local figure_number_above
+    local gaps_below
+REM First part:
+REM First fixate the current brick
+    for i=0 to arraysize(figure(), 1)
+        if figure(i) = 1 then
+            block_x = block_x + 1
+        elsif figure(i) = 2 then
+            block_x = block_x - 1
+        elsif figure(i) = 3 then
+            block_y = block_y - 1
+        fi
+        MATRIX(block_x, block_y) = abs(MATRIX(block_x, block_y))
+    next
+REM Second part:
+REM Check if some lines are compelete and if so remove them in the next step
+    i = 0
+    for block_y_to_check=0 to 3 REM the rows
+        for block_x_to_check=0 to 9 REM the columns
+            if block_y_original-block_y_to_check < 0 then
+                game_over()
+            elsif MATRIX(block_x_to_check, block_y_original-block_y_to_check) = 0 then
+                goto CHECK_LINES_NEXT
+            fi
+            print MATRIX(block_x_to_check, block_y_original-block_y_to_check),
+        next
+        dropping = 1
+        complete_lines(i)=block_y_original-block_y_to_check
+        label CHECK_LINES_NEXT
+        i=i+1
+    next
+REM If no lines were completed, exit the subroutine
+    if dropping = 0 then
+        return
+    fi
+    for i=0 to 3
+        print complete_lines(i)
+    next
+    
+REM Remove the lines
+    for i=0 to 3
+        if complete_lines(i)=0 then
+            goto REMOVE_LINES_NEXT
+        else
+            for block_x_to_clear=0 to 9
+                clear_block(block_x_to_clear, complete_lines(i))
+            next
+            dropped_gaps = dropped_gaps + 1 
+        fi
+        label REMOVE_LINES_NEXT
+    next
+REM Wait 1 sec
+    wait 1
+    
+    
+REM Drop the lines above
+    for y_iterator=block_y_original to 1+dropped_gaps step -1
+REM Check if the current line is above gap(s)    
+        gaps_below = 0
+        for i=0 to 3
+            if y_iterator < complete_lines(i) then
+                gaps_below = gaps_below + 1  
+            fi
+        next
+        if gaps_below = 0 then
+            goto DROP_LINES_NEXT
+        fi
+        
+        for block_x_to_clear=0 to 9
+            clear_block(block_x_to_clear, y_iterator)
+            figure_number_above = abs(MATRIX(block_x_to_clear, y_iterator-gaps_below))
+REM            print "Block_x: ",str$(block_x_to_clear)," figure_number_above: ",str$(figure_number_above)
+            draw_block(block_x_to_clear, y_iterator, figure_number_above)
+            
+REM because draw_block() makes only negative entries into MATRIX
+            MATRIX(block_x_to_clear, y_iterator) = MATRIX(block_x_to_clear, y_iterator) * -1
+        next
+REM        print "Block_y: ",str$(y_iterator)," Block_y_above: ",str$(y_iterator-gaps_below)
+REM        print ""
+        label DROP_LINES_NEXT
+    next
+end sub
 
 
 
