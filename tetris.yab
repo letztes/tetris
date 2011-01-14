@@ -946,49 +946,27 @@ REM here
     clear screen
     
 REM Drop the lines above
-    for y_iterator=block_y_original to 1+dropped_gaps step -1
+    gaps_below = 0
+    for y_iterator=block_y_original to 3+dropped_gaps step -1
 REM Check if the current line is above gap(s)    
-        gaps_below = 0
         for i=0 to 3
-REM here
-            if y_iterator > 11 then
-                print "y_iterator: ",str$(y_iterator)," complete_lines(",str$(i),"): ",complete_lines(i)," gaps_below: ",str$(gaps_below)
-            fi
-            if y_iterator <= complete_lines(i) then
+            if y_iterator-i = complete_lines(i) then
                 gaps_below = gaps_below + 1
             fi
             
         next
-                print ""
-REM        wait 1
-        if gaps_below = 0 then
-            goto DROP_LINES_NEXT
-        fi
+        
         for block_x_to_clear=0 to 9
             clear_block(block_x_to_clear, y_iterator)
             figure_number_above = abs(MATRIX(block_x_to_clear, y_iterator-gaps_below))
-REM            print "Block_x: ",str$(block_x_to_clear)," figure_number_above: ",str$(figure_number_above)
             draw_block(block_x_to_clear, y_iterator, figure_number_above)
             
 REM because draw_block() makes only negative entries into MATRIX
             MATRIX(block_x_to_clear, y_iterator) = MATRIX(block_x_to_clear, y_iterator) * -1
         next
-REM        print "Block_y: ",str$(y_iterator)," Block_y_above: ",str$(y_iterator-gaps_below)
-REM        print ""
         label DROP_LINES_NEXT
     next
-REM here    
-    inkey$
 end sub
-
-
-
-
-
-
-
-
-
 
 
 
