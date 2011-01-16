@@ -3,39 +3,7 @@ REM requires yabasic 2.7x, download at www.yabasic.de
 
 REM Author:  Artur Spengler
 REM Website: www.github.com/letztes/tetris
-REM License: Do what you want with this code.
-
-REM TODO
-REM FIXES:
-REM
-REM deletion of lines works only fine for subsquent lines, not for
-REM complete lines with sparse lines inbetween
-REM
-REM
-REM REFACTORING
-REM
-REM Make rotate_clockwise() more compact, there is too much repeating code
-REM Define all the nonglobal variables as locals
-REM Bring all the subroutines arguments in a consistent order: (figure_number, figure(), root_block_x, root_block_y)
-REM
-REM
-REM
-REM FEATURES
-REM   
-REM Displaying the keydescription, i.g. "Esc for exit"
-REM Brickrotation counterclockwise
-REM Counting up levels with each 10 completed lines and gaining speed
-REM Counting points
-REM
-REM
-REM
-REM DONE
-REM
-REM
-REM
-REM
-REM
-REM 
+REM License: GPL
 
 dim BLOCK_COLOR(4)
 dim rotated_figure(4)
@@ -377,6 +345,7 @@ sub choose_figure(figure(), figure_number)
         figure(3) = 1
         figure(4) = 3
         return 1
+        
     fi
 end sub
 
@@ -782,6 +751,27 @@ REM local temporary_blocks come handy in this sub to make things shorter
 end sub
 
 
+sub calculate_figure_number()
+    figure_number = int(ran(19))+1 REM 0 means empty
+    switch figure_number
+REM Double the probability for the left bottom S block
+        case 20: figure_number = 12
+        case 21: figure_number = 13
+REM Double the probability for the right bottom S block
+        case 22: figure_number = 14
+        case 23: figure_number = 15
+REM Double the probability for the stick
+        case 24: figure_number = 1
+        case 25: figure_number = 2
+REM Quadruple the probability for the square block
+        case 26: figure_number = 3
+        case 27: figure_number = 3
+        case 28: figure_number = 3
+    end switch
+    return figure_number
+end sub
+
+
 sub main()
 
 REM Testvariables
@@ -809,7 +799,7 @@ REM Testvariables
     local figure(4)
     local next_figure_number
     
-    next_figure_number = int(ran(19))+1
+    next_figure_number = calculate_figure_number()
     
     local i
     
@@ -817,7 +807,7 @@ REM   "while not game over"-LOOP
     while(1=1)
         
         figure_number = next_figure_number
-        next_figure_number = int(ran(19))+1 REM 0 means empty
+        next_figure_number = calculate_figure_number()
         
         display_preview_figure(next_figure_number)
         
@@ -877,7 +867,6 @@ REM       "while figure is falling down and has not landed yet"-LOOP
                 root_block_y = root_block_y + 1
                 draw_figure(root_block_x, root_block_y, figure(), figure_number)
             else
-                print "root_block_y is ",str$(root_block_y)
                 turn_is_over(root_block_x, root_block_y, figure())
                 break
             fi
@@ -895,20 +884,32 @@ REM ######################
 
 
 sub turn_is_over(block_x, block_y, figure())
-REM This subroutine is divided into two parts
+
+REM This subroutine is divided into four parts
+REM Part 1: Fixate the current brick
+REM Part 2: Check if some lines are complete; exit the routine if none
+REM Part 3: Remove the complete lines
+REM Part 4: Drop the lines above
+
+REM Before any parts, define the local variables for this subroutine
     local i
     local complete_lines(4) REM array to store the y-coordinates of complete lines
+    local complete_lines_in_figure(4) REM array to store the y-coordinates of complete lines
     local block_y_to_check REM iterator variable
     local block_x_to_check REM iterator variable
     local block_y_original REM needed for checking the lines
-    local dropped_gaps REM counter variable to adjust the subsequent dropping
-    local dropping REM Flag variable to exit or not the sub
-    block_y_original = block_y
+    local dropped_gaps REM counter variable for gaining the level and the speed
     local y_iterator
     local figure_number_above
-    local gaps_below
+    local lines_in_figure
+    local lowest_complete_line
+    local complete_lines_in_figure_cat$
+    
+    block_y_original = block_y
+    complete_lines_in_figure_cat$ = "0000"
+    
 REM First part:
-REM First fixate the current brick
+REM Fixate the current brick
     for i=0 to arraysize(figure(), 1)
         if figure(i) = 1 then
             block_x = block_x + 1
@@ -920,71 +921,123 @@ REM First fixate the current brick
         MATRIX(block_x, block_y) = abs(MATRIX(block_x, block_y))
     next
 REM Second part:
-REM Check if some lines are compelete and if so remove them in the next step
+REM Check if some lines are compelete and if so remove them in the next step;
+REM exit the routine otherwise
     i = 0
-    for block_y_to_check=0 to 3 REM the rows
-        for block_x_to_check=0 to 9 REM the columns
+    local lines_dropped
+    lines_dropped = 0
+    for block_y_to_check=0 to 3 REM the rows in the figure
+        for block_x_to_check=0 to 9 REM the columns in the field
             if block_y_original-block_y_to_check < 0 then
                 game_over()
             elsif MATRIX(block_x_to_check, block_y_original-block_y_to_check) = 0 then
                 goto CHECK_LINES_NEXT
             fi
         next
-        dropping = 1
+        lines_dropped = lines_dropped + 1
         complete_lines(i)=block_y_original-block_y_to_check
+        complete_lines_in_figure(i)=1
+
         label CHECK_LINES_NEXT
+        
         i=i+1
     next
 REM If no lines were completed, exit the subroutine
-    if dropping = 0 then
+    if lines_dropped = 0 then
         return
     fi
     
+REM Part 3: Remove the complete lines
 REM Remove the lines
     for i=0 to 3
         if complete_lines(i)=0 then
             goto REMOVE_LINES_NEXT
         else
-            for block_x_to_clear=0 to 9
-                clear_block(block_x_to_clear, complete_lines(i))
+            for block_x_to_change=0 to 9
+                clear_block(block_x_to_change, complete_lines(i))
             next
-            dropped_gaps = dropped_gaps + 1 
+            dropped_gaps = dropped_gaps + 1
         fi
         label REMOVE_LINES_NEXT
     next
 REM Wait 1 sec
     wait 1
     
-REM here
-    clear screen
     
-REM Drop the lines above
-    gaps_below = 0
-    for y_iterator=block_y_original to 1 step -1
-REM Check if the current line is above gap(s)    
-        for i=0 to 3
-            if y_iterator-i = complete_lines(i) then
-                gaps_below = gaps_below + 1
-#                complete_lines(i) = 0
-            fi
-            
-        next
-            for block_x_to_clear=0 to 9
-                clear_block(block_x_to_clear, y_iterator)
-                if y_iterator-gaps_below > 0 then
-                    figure_number_above = abs(MATRIX(block_x_to_clear, y_iterator-gaps_below))
-                    draw_block(block_x_to_clear, y_iterator, figure_number_above)
+REM Part 4: Drop the lines above
+REM         Therefore first the array with the lines in figure needs to be
+REM         adjusted, so the dropping routine does not need to look ahead
+REM         but simple drops the line according to the array
+    
+REM adjust the number of lines to look ahead when dropping
+    mid$(complete_lines_in_figure_cat$,1,1) = str$(complete_lines_in_figure(0))
+    mid$(complete_lines_in_figure_cat$,2,1) = str$(complete_lines_in_figure(1))
+    mid$(complete_lines_in_figure_cat$,3,1) = str$(complete_lines_in_figure(2))
+    mid$(complete_lines_in_figure_cat$,4,1) = str$(complete_lines_in_figure(3))
+    
+#    print complete_lines_in_figure_cat$
+    switch complete_lines_in_figure_cat$
+        case "1000": complete_lines_in_figure_cat$ = "1111": break
+        case "0100": complete_lines_in_figure_cat$ = "0111": break
+        case "0010": complete_lines_in_figure_cat$ = "0011": break
+        case "0001": complete_lines_in_figure_cat$ = "0001": break
+        case "1100": complete_lines_in_figure_cat$ = "2222": break
+        case "0110": complete_lines_in_figure_cat$ = "0222": break
+        case "0011": complete_lines_in_figure_cat$ = "0022": break
+        case "1010": complete_lines_in_figure_cat$ = "1222": break
+        case "0101": complete_lines_in_figure_cat$ = "0122": break
+        case "1001": complete_lines_in_figure_cat$ = "1122": break
+        case "0111": complete_lines_in_figure_cat$ = "0333": break
+        case "1011": complete_lines_in_figure_cat$ = "1333": break
+        case "1101": complete_lines_in_figure_cat$ = "2333": break
+        case "1110": complete_lines_in_figure_cat$ = "3333": break
+        case "1111": complete_lines_in_figure_cat$ = "4444": break
+    
+    end switch
+    
+    complete_lines_in_figure(0) = val(mid$(complete_lines_in_figure_cat$,1,1))
+    complete_lines_in_figure(1) = val(mid$(complete_lines_in_figure_cat$,2,1))
+    complete_lines_in_figure(2) = val(mid$(complete_lines_in_figure_cat$,3,1))
+    complete_lines_in_figure(3) = val(mid$(complete_lines_in_figure_cat$,4,1))
+    
+#    print complete_lines_in_figure_cat$
+#    inkey$
+    
+    
+REM Determine the lowest complete lines, i.e. where to start to drop
+    for i=0 to 3
+        if complete_lines(i)<>0 then
+            lowest_complete_line = complete_lines(i)
+            lowest_complete_line_index = i
+            break
+        fi
+    next
+    
+REM Begin to actually drop the lines above the complete ones
+    lines_in_figure = lowest_complete_line_index
+    for y_iterator=lowest_complete_line to 1 step -1
+        
+            for block_x_to_change=0 to 9
+                clear_block(block_x_to_change, y_iterator)
+                if y_iterator-lines_in_figure > 0 then
+                    figure_number_above = abs(MATRIX(block_x_to_change, y_iterator-complete_lines_in_figure(lines_in_figure)))
+                    draw_block(block_x_to_change, y_iterator, figure_number_above)
                 
 REM because draw_block() makes only negative entries into MATRIX
-                    MATRIX(block_x_to_clear, y_iterator) = MATRIX(block_x_to_clear, y_iterator) * -1
+                    MATRIX(block_x_to_change, y_iterator) = MATRIX(block_x_to_change, y_iterator) * -1
                 fi
             next
+            if lines_in_figure < 3 then
+                lines_in_figure = lines_in_figure + 1
+            fi
     next
     count_lines(dropped_gaps)
 end sub
 
 
 sub count_lines(dropped_gaps)
+
+REM and print them out
     LINES_TOTAL = LINES_TOTAL + dropped_gaps
 REM clear rectangle for text
     color 0,0,0
@@ -993,11 +1046,14 @@ REM print text
     color 255,255,255
     text LINES_COUNT_WINDOW_OFFSET_X+10,LINES_COUNT_WINDOW_OFFSET_Y+20,"Lines: "
     text LINES_COUNT_WINDOW_OFFSET_X+50,LINES_COUNT_WINDOW_OFFSET_Y+21,str$(LINES_TOTAL)
-REM gain speed if LINES_TOTAL % 10 = 0
-    if mod(LINES_TOTAL,10) = 0 and TIMELOOPS > 1 then
+REM gain speed if another 10 lines are full
+REM or the game just begun
+    if LINES_TOTAL - LEVEL_TOTAL * 10 >= 0 and TIMELOOPS > 1 or LEVEL_TOTAL = 0 then
+        print "TIMELOOPS: ",
+        print TIMELOOPS
         color 0,0,0
         fill rectangle LEVEL_COUNT_WINDOW_OFFSET_X,LEVEL_COUNT_WINDOW_OFFSET_Y to LEVEL_COUNT_WINDOW_OFFSET_X+LEVEL_COUNT_WINDOW_WIDTH, LEVEL_COUNT_WINDOW_OFFSET_Y+LEVEL_COUNT_WINDOW_HEIGHT
-    REM print text
+REM print text
         TIMELOOPS = TIMELOOPS - 1
         LEVEL_TOTAL = LEVEL_TOTAL + 1
         color 255,255,255

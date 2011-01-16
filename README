@@ -1,2 +1,34 @@
 Another tetris clone, just for fun.
-Works fine, and looks pretty neet.
+Works fine and looks pretty neet.
+
+
+
+TODO
+
+FIXES:
+
+
+
+REFACTORING
+
+Make the lookahead for the cleared lines above dynamically instead of
+  with the static array in subroutine turn_is_over()
+Make rotate_clockwise() more compact, there is too much repeating code
+Define all the nonglobal variables as locals
+Bring all the subroutines arguments in a consistent order: (figure_number, figure(), root_block_x, root_block_y)
+
+
+
+FEATURES
+  
+Displaying the keydescription, i.g. "Esc for exit"
+Brickrotation counterclockwise
+Counting points
+Change color scheme of the brick with every 10 lines
+
+
+
+DONE
+
+
+
