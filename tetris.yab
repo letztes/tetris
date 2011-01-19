@@ -35,6 +35,11 @@ LEVEL_COUNT_WINDOW_HEIGHT = BLOCK_WIDTH
 LEVEL_COUNT_WINDOW_OFFSET_X = LINES_COUNT_WINDOW_OFFSET_X
 LEVEL_COUNT_WINDOW_OFFSET_Y = PREVIEW_WINDOW_OFFSET_Y + 50
 
+POINTS_COUNT_WINDOW_WIDTH  = BLOCK_WIDTH*4
+POINTS_COUNT_WINDOW_HEIGHT = BLOCK_WIDTH
+POINTS_COUNT_WINDOW_OFFSET_X = LEVEL_COUNT_WINDOW_OFFSET_X
+POINTS_COUNT_WINDOW_OFFSET_Y = LEVEL_WINDOW_OFFSET_Y + 50
+
 REM measures in blocks
 dim MATRIX(10,20)
 
@@ -55,6 +60,7 @@ REM various
 TIMELOOPS = 15
 LINES_TOTAL = 0
 LEVEL_TOTAL = 0
+POINTS_TOTAL = 0
 
 
 
@@ -872,6 +878,7 @@ REM       "while figure is falling down and has not landed yet"-LOOP
             fi
         wend
     wend
+    print "not allowed to get to here!"
     game_over()
 end sub
 
@@ -1031,7 +1038,7 @@ REM because draw_block() makes only negative entries into MATRIX
                 lines_in_figure = lines_in_figure + 1
             fi
     next
-    count_lines(dropped_gaps)
+    count_lines(dropped_gaps) REM and levels and points
 end sub
 
 
@@ -1039,7 +1046,7 @@ sub count_lines(dropped_gaps)
 
 REM and print them out
     LINES_TOTAL = LINES_TOTAL + dropped_gaps
-REM clear rectangle for text
+REM clear rectangle for text and print LINES_TOTAL
     color 0,0,0
     fill rectangle LINES_COUNT_WINDOW_OFFSET_X,LINES_COUNT_WINDOW_OFFSET_Y to LINES_COUNT_WINDOW_OFFSET_X+LINES_COUNT_WINDOW_WIDTH, LINES_COUNT_WINDOW_OFFSET_Y+LINES_COUNT_WINDOW_HEIGHT
 REM print text
@@ -1049,19 +1056,24 @@ REM print text
 REM gain speed if another 10 lines are full
 REM or the game just begun
     if LINES_TOTAL - LEVEL_TOTAL * 10 >= 0 and TIMELOOPS > 1 or LEVEL_TOTAL = 0 then
-        print "TIMELOOPS: ",
-        print TIMELOOPS
         color 0,0,0
         fill rectangle LEVEL_COUNT_WINDOW_OFFSET_X,LEVEL_COUNT_WINDOW_OFFSET_Y to LEVEL_COUNT_WINDOW_OFFSET_X+LEVEL_COUNT_WINDOW_WIDTH, LEVEL_COUNT_WINDOW_OFFSET_Y+LEVEL_COUNT_WINDOW_HEIGHT
-REM print text
+REM print text LEVEL_TOTAL
         TIMELOOPS = TIMELOOPS - 1
         LEVEL_TOTAL = LEVEL_TOTAL + 1
         color 255,255,255
         text LEVEL_COUNT_WINDOW_OFFSET_X+10,LEVEL_COUNT_WINDOW_OFFSET_Y+20,"LEVEL: "
-        text LEVEL_COUNT_WINDOW_OFFSET_X+50,LEVEL_COUNT_WINDOW_OFFSET_Y+21,str$(LEVEL_TOTAL)
+        text LEVEL_COUNT_WINDOW_OFFSET_X+50,LEVEL_COUNT_WINDOW_OFFSET_Y+20,str$(LEVEL_TOTAL)
         
     fi
-REM 
+REM clear window area for POINTS_TOTAL
+    color 0,0,0
+    fill rectangle POINTS_COUNT_WINDOW_OFFSET_X,POINTS_COUNT_WINDOW_OFFSET_Y to POINTS_COUNT_WINDOW_OFFSET_X+POINTS_COUNT_WINDOW_WIDTH, POINTS_COUNT_WINDOW_OFFSET_Y+POINTS_COUNT_WINDOW_HEIGHT
+REM print text POINTS_TOTAL
+    POINTS_TOTAL = POINTS_TOTAL + 133 * dropped_gaps * LEVEL_TOTAL
+    color 255,255,255
+    text POINTS_COUNT_WINDOW_OFFSET_X+10,POINTS_COUNT_WINDOW_OFFSET_Y+20,"POINTS: "
+    text POINTS_COUNT_WINDOW_OFFSET_X+60,POINTS_COUNT_WINDOW_OFFSET_Y+20,str$(POINTS_TOTAL)
 end sub
 
 
