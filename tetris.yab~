@@ -973,7 +973,7 @@ REM Remove the lines
         label REMOVE_LINES_NEXT
     next
 REM Wait 1 sec
-REM    wait 1
+    wait 1
     
     
 REM Part 4: Drop the lines above
