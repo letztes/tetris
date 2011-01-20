@@ -905,7 +905,7 @@ REM Before any parts, define the local variables for this subroutine
     local block_y_to_check REM iterator variable
     local block_x_to_check REM iterator variable
     local block_y_original REM needed for checking the lines
-    local dropped_gaps REM counter variable for gaining the level and the speed
+    local lines_dropped REM counter variable for gaining the level and the speed
     local y_iterator
     local figure_number_above
     local lines_in_figure
@@ -931,8 +931,6 @@ REM Second part:
 REM Check if some lines are compelete and if so remove them in the next step;
 REM exit the routine otherwise
     i = 0
-    local lines_dropped
-    lines_dropped = 0
     for block_y_to_check=0 to 3 REM the rows in the figure
         for block_x_to_check=0 to 9 REM the columns in the field
             if block_y_original-block_y_to_check < 0 then
@@ -941,9 +939,9 @@ REM exit the routine otherwise
                 goto CHECK_LINES_NEXT
             fi
         next
-        lines_dropped = lines_dropped + 1
         complete_lines(i)=block_y_original-block_y_to_check
         complete_lines_in_figure(i)=1
+        lines_dropped = lines_dropped + 1
 
         label CHECK_LINES_NEXT
         
@@ -956,24 +954,18 @@ REM If no lines were completed, exit the subroutine
     
 REM Part 3: Remove the complete lines
 REM Remove the lines
-    for i=0 to 3
-        REM if in the line an empty block is encountered
-        if complete_lines(i)=0 then
-            goto REMOVE_LINES_NEXT
-        else
-            REM remove in the current line all blocks, beginning with
-            REM blocks 4 and 5, then wait 0.1 sec, then blocks 3 and 6, etc.
-            for block_x_to_change=0 to 4
+REM remove in the current line all blocks, beginning with
+REM blocks 4 and 5, then wait 0.1 sec, then blocks 3 and 6, etc.
+    for block_x_to_change=0 to 4
+        for i=0 to 3
+            REM if in the line no empty blocks are encountered
+            if complete_lines_in_figure(i)=1 then
                 clear_block(5+block_x_to_change, complete_lines(i))
                 clear_block(4-block_x_to_change, complete_lines(i))
-                wait 0.1
-            next
-            dropped_gaps = dropped_gaps + 1
-        fi
-        label REMOVE_LINES_NEXT
+            fi
+        next
+        wait 0.1
     next
-REM Wait 1 sec
-REM    wait 1
     
     
 REM Part 4: Drop the lines above
@@ -1043,14 +1035,14 @@ REM because draw_block() makes only negative entries into MATRIX
                 lines_in_figure = lines_in_figure + 1
             fi
     next
-    count_lines(dropped_gaps) REM and levels and points
+    count_lines(lines_dropped) REM and levels and points
 end sub
 
 
-sub count_lines(dropped_gaps)
+sub count_lines(lines_dropped)
 
 REM and print them out
-    LINES_TOTAL = LINES_TOTAL + dropped_gaps
+    LINES_TOTAL = LINES_TOTAL + lines_dropped
 REM clear rectangle for text and print LINES_TOTAL
     color 0,0,0
     fill rectangle LINES_COUNT_WINDOW_OFFSET_X,LINES_COUNT_WINDOW_OFFSET_Y to LINES_COUNT_WINDOW_OFFSET_X+LINES_COUNT_WINDOW_WIDTH, LINES_COUNT_WINDOW_OFFSET_Y+LINES_COUNT_WINDOW_HEIGHT
@@ -1075,7 +1067,7 @@ REM clear window area for POINTS_TOTAL
     color 0,0,0
     fill rectangle POINTS_COUNT_WINDOW_OFFSET_X,POINTS_COUNT_WINDOW_OFFSET_Y to POINTS_COUNT_WINDOW_OFFSET_X+POINTS_COUNT_WINDOW_WIDTH, POINTS_COUNT_WINDOW_OFFSET_Y+POINTS_COUNT_WINDOW_HEIGHT
 REM print text POINTS_TOTAL
-    POINTS_TOTAL = POINTS_TOTAL + 133 * dropped_gaps * LEVEL_TOTAL
+    POINTS_TOTAL = POINTS_TOTAL + 133 * lines_dropped * LEVEL_TOTAL
     color 255,255,255
     text POINTS_COUNT_WINDOW_OFFSET_X+10,POINTS_COUNT_WINDOW_OFFSET_Y+20,"POINTS: "
     text POINTS_COUNT_WINDOW_OFFSET_X+60,POINTS_COUNT_WINDOW_OFFSET_Y+20,str$(POINTS_TOTAL)

@@ -23,6 +23,7 @@ Bring all the subroutines arguments in a consistent order: (figure_number, figur
 
 FEATURES
 
+Deleting of completing lines from the center to the sides
 Add a csv file for top score storage
 Displaying the keydescription, i.g. "Esc for exit"
 Brickrotation counterclockwise
