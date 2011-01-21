@@ -440,6 +440,324 @@ sub is_move_ok(figure(), block_x, block_y)
 end sub
 
 
+sub rotate_counterclockwise(root_block_x, root_block_y, figure(), figure_number)
+REM global INTERMEDIATE_BLOCKS are necessary because the sub cannot return multiple values
+REM local temporary_blocks come handy in this sub to make things shorter
+    INTERMEDIATE_BLOCK_X = root_block_x
+    INTERMEDIATE_BLOCK_Y = root_block_y
+    
+    REM horizontal stick
+    if figure_number=1 then
+        figure_number_rotated = 2
+        choose_figure(rotated_figure(), figure_number_rotated)
+        if is_move_ok(rotated_figure(), root_block_x+1, root_block_y+1) then
+        
+            clear_figure(root_block_x, root_block_y, figure())
+            
+            INTERMEDIATE_BLOCK_X = root_block_x+1
+            INTERMEDIATE_BLOCK_Y = root_block_y+1
+            figure_number = figure_number_rotated
+            choose_figure(figure(), figure_number)
+            
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
+            
+        fi
+        
+    REM vertical stick
+    elsif figure_number=2 then
+        figure_number_rotated = 1
+        choose_figure(rotated_figure(), figure_number_rotated)
+        if is_move_ok(rotated_figure(), root_block_x-1, root_block_y-1) then
+        
+            clear_figure(root_block_x, root_block_y, figure())
+            
+            INTERMEDIATE_BLOCK_X = root_block_x-1
+            INTERMEDIATE_BLOCK_Y = root_block_y-1
+            figure_number = figure_number_rotated
+            choose_figure(figure(), figure_number)
+            
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
+            
+        fi
+        
+    REM No need to rotate the square block
+        
+    REM bottom-left: nose left down horizontal L
+    elsif figure_number=4 then
+        figure_number_rotated = 7
+        choose_figure(rotated_figure(), figure_number_rotated)
+        if is_move_ok(rotated_figure(), root_block_x+2, root_block_y) then
+        
+            clear_figure(root_block_x, root_block_y, figure())
+            
+            INTERMEDIATE_BLOCK_X = root_block_x+2
+            INTERMEDIATE_BLOCK_Y = root_block_y
+            figure_number = figure_number_rotated
+            choose_figure(figure(), figure_number)
+            
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
+            
+        fi
+        
+    REM bottom-right nose top left vertical L
+    elsif figure_number=7 then
+        figure_number_rotated = 6
+        choose_figure(rotated_figure(), figure_number_rotated)
+        if is_move_ok(rotated_figure(), root_block_x-2, root_block_y-1) then
+        
+            clear_figure(root_block_x, root_block_y, figure())
+            
+            INTERMEDIATE_BLOCK_X = root_block_x-2
+            INTERMEDIATE_BLOCK_Y = root_block_y-1
+            figure_number = figure_number_rotated
+            choose_figure(figure(), figure_number)
+            
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
+            
+        fi
+    
+    REM bottom-left nose down horizontal L
+    elsif figure_number=6 then
+        figure_number_rotated = 5
+        choose_figure(rotated_figure(), figure_number_rotated)
+        if is_move_ok(rotated_figure(), root_block_x+1, root_block_y+1) then
+        
+            clear_figure(root_block_x, root_block_y, figure())
+            
+            INTERMEDIATE_BLOCK_X = root_block_x+1
+            INTERMEDIATE_BLOCK_Y = root_block_y+1
+            figure_number = figure_number_rotated
+            choose_figure(figure(), figure_number)
+            
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
+            
+        fi
+        
+    REM nose bottom right vertical L
+    elsif figure_number=5 then
+        figure_number_rotated = 4
+        choose_figure(rotated_figure(), figure_number_rotated)
+        if is_move_ok(rotated_figure(), root_block_x-1, root_block_y) then
+        
+            clear_figure(root_block_x, root_block_y, figure())
+            
+            INTERMEDIATE_BLOCK_X = root_block_x-1
+            INTERMEDIATE_BLOCK_Y = root_block_y
+            figure_number = figure_number_rotated
+            choose_figure(figure(), figure_number)
+            
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
+            
+        fi
+        
+    REM bottom-right nose down horizontal L
+    elsif figure_number=8 then
+        figure_number_rotated = 11
+        choose_figure(rotated_figure(), figure_number_rotated)
+        if is_move_ok(rotated_figure(), root_block_x-1, root_block_y) then
+        
+            clear_figure(root_block_x, root_block_y, figure())
+            
+            INTERMEDIATE_BLOCK_X = root_block_x-1
+            INTERMEDIATE_BLOCK_Y = root_block_y
+            figure_number = figure_number_rotated
+            choose_figure(figure(), figure_number)
+            
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
+            
+        fi
+        
+    REM bottom-left: nose top right vertical J
+    elsif figure_number=11 then
+        figure_number_rotated = 10
+        choose_figure(rotated_figure(), figure_number_rotated)
+        if is_move_ok(rotated_figure(), root_block_x+1, root_block_y-1) then
+        
+            clear_figure(root_block_x, root_block_y, figure())
+            
+            INTERMEDIATE_BLOCK_X = root_block_x+1
+            INTERMEDIATE_BLOCK_Y = root_block_y-1
+            figure_number = figure_number_rotated
+            choose_figure(figure(), figure_number)
+            
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
+            
+        fi
+        
+    REM bottom-right nose up left horizontal L
+    elsif figure_number=10 then
+        figure_number_rotated = 9
+        choose_figure(rotated_figure(), figure_number_rotated)
+        if is_move_ok(rotated_figure(), root_block_x-2, root_block_y+1) then
+        
+            clear_figure(root_block_x, root_block_y, figure())
+            
+            INTERMEDIATE_BLOCK_X = root_block_x-2
+            INTERMEDIATE_BLOCK_Y = root_block_y+1
+            figure_number = figure_number_rotated
+            choose_figure(figure(), figure_number)
+            
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
+            
+        fi
+        
+    REM bottom-left: nose bottom left vertical J
+    elsif figure_number=9 then
+        figure_number_rotated = 8
+        choose_figure(rotated_figure(), figure_number_rotated)
+        if is_move_ok(rotated_figure(), root_block_x+2, root_block_y) then
+        
+            clear_figure(root_block_x, root_block_y, figure())
+            
+            INTERMEDIATE_BLOCK_X = root_block_x+2
+            INTERMEDIATE_BLOCK_Y = root_block_y
+            figure_number = figure_number_rotated
+            choose_figure(figure(), figure_number)
+            
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
+            
+        fi
+    REM left bottom horizontal S-block    
+    elsif figure_number=12 then
+        figure_number_rotated = 13
+        choose_figure(rotated_figure(), figure_number_rotated)
+        if is_move_ok(rotated_figure(), root_block_x+1, root_block_y) then
+        
+            clear_figure(root_block_x, root_block_y, figure())
+            
+            INTERMEDIATE_BLOCK_X = root_block_x+1
+            INTERMEDIATE_BLOCK_Y = root_block_y
+            figure_number = figure_number_rotated
+            choose_figure(figure(), figure_number)
+            
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
+            
+        fi
+        
+    REM right bottom vertical S-block
+    elsif figure_number=13 then
+        figure_number_rotated = 12
+        choose_figure(rotated_figure(), figure_number_rotated)
+        if is_move_ok(rotated_figure(), root_block_x-1, root_block_y) then
+        
+            clear_figure(root_block_x, root_block_y, figure())
+            
+            INTERMEDIATE_BLOCK_X = root_block_x-1
+            INTERMEDIATE_BLOCK_Y = root_block_y
+            figure_number = figure_number_rotated
+            choose_figure(figure(), figure_number)
+            
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
+            
+        fi
+        
+    REM right bottom horizontal S-block    
+    elsif figure_number=14 then
+        figure_number_rotated = 15
+        choose_figure(rotated_figure(), figure_number_rotated)
+        if is_move_ok(rotated_figure(), root_block_x-1, root_block_y) then
+        
+            clear_figure(root_block_x, root_block_y, figure())
+            
+            INTERMEDIATE_BLOCK_X = root_block_x-1
+            INTERMEDIATE_BLOCK_Y = root_block_y
+            figure_number = figure_number_rotated
+            choose_figure(figure(), figure_number)
+            
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
+            
+        fi
+        
+    REM left bottom vertical S-block
+    elsif figure_number=15 then
+        figure_number_rotated = 14
+        choose_figure(rotated_figure(), figure_number_rotated)
+        if is_move_ok(rotated_figure(), root_block_x+1, root_block_y) then
+        
+            clear_figure(root_block_x, root_block_y, figure())
+            
+            INTERMEDIATE_BLOCK_X = root_block_x+1
+            INTERMEDIATE_BLOCK_Y = root_block_y
+            figure_number = figure_number_rotated
+            choose_figure(figure(), figure_number)
+            
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
+            
+        fi
+        
+    REM left bottom nose top horizontal T-brick
+    elsif figure_number=16 then
+        figure_number_rotated = 17
+        choose_figure(rotated_figure(), figure_number_rotated)
+        if is_move_ok(rotated_figure(), root_block_x+1, root_block_y) then
+        
+            clear_figure(root_block_x, root_block_y, figure())
+            
+            INTERMEDIATE_BLOCK_X = root_block_x+1
+            INTERMEDIATE_BLOCK_Y = root_block_y
+            figure_number = figure_number_rotated
+            choose_figure(figure(), figure_number)
+            
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
+            
+        fi
+        
+    REM nose right vertical T-block
+    elsif figure_number=17 then
+        figure_number_rotated = 18
+        choose_figure(rotated_figure(), figure_number_rotated)
+        if is_move_ok(rotated_figure(), root_block_x, root_block_y) then
+        
+            clear_figure(root_block_x, root_block_y, figure())
+            
+            INTERMEDIATE_BLOCK_X = root_block_x
+            INTERMEDIATE_BLOCK_Y = root_block_y
+            figure_number = figure_number_rotated
+            choose_figure(figure(), figure_number)
+            
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
+            
+        fi
+        
+    REM nose down horizontal T-block
+    elsif figure_number=18 then
+        figure_number_rotated = 19
+        choose_figure(rotated_figure(), figure_number_rotated)
+        if is_move_ok(rotated_figure(), root_block_x, root_block_y) then
+        
+            clear_figure(root_block_x, root_block_y, figure())
+            
+            INTERMEDIATE_BLOCK_X = root_block_x
+            INTERMEDIATE_BLOCK_Y = root_block_y
+            figure_number = figure_number_rotated
+            choose_figure(figure(), figure_number)
+            
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
+            
+        fi
+        
+    REM nose left vertical T-block
+    elsif figure_number=19 then
+        figure_number_rotated = 16
+        choose_figure(rotated_figure(), figure_number_rotated)
+        if is_move_ok(rotated_figure(), root_block_x-1, root_block_y) then
+        
+            clear_figure(root_block_x, root_block_y, figure())
+            
+            INTERMEDIATE_BLOCK_X = root_block_x-1
+            INTERMEDIATE_BLOCK_Y = root_block_y
+            figure_number = figure_number_rotated
+            choose_figure(figure(), figure_number)
+            
+            draw_figure(INTERMEDIATE_BLOCK_X, INTERMEDIATE_BLOCK_Y, figure(), figure_number)
+            
+        fi
+    fi
+    return figure_number
+
+end sub
+
+
 sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
 REM global INTERMEDIATE_BLOCKS are necessary because the sub cannot return multiple values
 REM local temporary_blocks come handy in this sub to make things shorter
@@ -503,12 +821,12 @@ REM local temporary_blocks come handy in this sub to make things shorter
     elsif figure_number=5 then
         figure_number_rotated = 6
         choose_figure(rotated_figure(), figure_number_rotated)
-        if is_move_ok(rotated_figure(), root_block_x-1, root_block_y) then
+        if is_move_ok(rotated_figure(), root_block_x-1, root_block_y-1) then
         
             clear_figure(root_block_x, root_block_y, figure())
             
             INTERMEDIATE_BLOCK_X = root_block_x-1
-            INTERMEDIATE_BLOCK_Y = root_block_y
+            INTERMEDIATE_BLOCK_Y = root_block_y-1
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
@@ -520,12 +838,12 @@ REM local temporary_blocks come handy in this sub to make things shorter
     elsif figure_number=6 then
         figure_number_rotated = 7
         choose_figure(rotated_figure(), figure_number_rotated)
-        if is_move_ok(rotated_figure(), root_block_x+2, root_block_y) then
+        if is_move_ok(rotated_figure(), root_block_x+2, root_block_y+1) then
         
             clear_figure(root_block_x, root_block_y, figure())
             
             INTERMEDIATE_BLOCK_X = root_block_x+2
-            INTERMEDIATE_BLOCK_Y = root_block_y
+            INTERMEDIATE_BLOCK_Y = root_block_y+1
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
@@ -571,12 +889,12 @@ REM local temporary_blocks come handy in this sub to make things shorter
     elsif figure_number=9 then
         figure_number_rotated = 10
         choose_figure(rotated_figure(), figure_number_rotated)
-        if is_move_ok(rotated_figure(), root_block_x+2, root_block_y) then
+        if is_move_ok(rotated_figure(), root_block_x+2, root_block_y-1) then
         
             clear_figure(root_block_x, root_block_y, figure())
             
             INTERMEDIATE_BLOCK_X = root_block_x+2
-            INTERMEDIATE_BLOCK_Y = root_block_y
+            INTERMEDIATE_BLOCK_Y = root_block_y-1
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
@@ -588,12 +906,12 @@ REM local temporary_blocks come handy in this sub to make things shorter
     elsif figure_number=10 then
         figure_number_rotated = 11
         choose_figure(rotated_figure(), figure_number_rotated)
-        if is_move_ok(rotated_figure(), root_block_x-1, root_block_y) then
+        if is_move_ok(rotated_figure(), root_block_x-1, root_block_y+1) then
         
             clear_figure(root_block_x, root_block_y, figure())
             
             INTERMEDIATE_BLOCK_X = root_block_x-1
-            INTERMEDIATE_BLOCK_Y = root_block_y
+            INTERMEDIATE_BLOCK_Y = root_block_y+1
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
@@ -776,115 +1094,6 @@ REM Quadruple the probability for the square block
     end switch
     return figure_number
 end sub
-
-
-sub main()
-
-REM Testvariables
-            local y
-            local x
-            
-            
-    clear screen REM reading keystrokes with inkey$() needs 'clear screen'
-    open window WINDOW_WIDTH, WINDOW_HEIGHT
-    backcolor 0,0,0
-    REM backcolor does not work, that is why big black rectangle
-    color 0,0,0
-    fill rectangle 0,0 to WINDOW_WIDTH, WINDOW_HEIGHT
-    
-    REM draw field border
-    color 150,150,150
-    rectangle FIELD_OFFSET_X-1, FIELD_OFFSET_Y-1 to FIELD_OFFSET_X+FIELD_WIDTH+1, FIELD_OFFSET_Y+FIELD_HEIGHT+1
-    REM draw next figure window
-    rectangle PREVIEW_WINDOW_OFFSET_X-1, PREVIEW_WINDOW_OFFSET_Y-1 to PREVIEW_WINDOW_OFFSET_X+PREVIEW_WINDOW_WIDTH+1, PREVIEW_WINDOW_OFFSET_Y+PREVIEW_WINDOW_HEIGHT+1
-    
-    REM draw total lines counter
-    count_lines(LINES_TOTAL)
-    
-    local figure_number
-    local figure(4)
-    local next_figure_number
-    
-    next_figure_number = calculate_figure_number()
-    
-    local i
-    
-REM   "while not game over"-LOOP
-    while(1=1)
-        
-        figure_number = next_figure_number
-        next_figure_number = calculate_figure_number()
-        
-        display_preview_figure(next_figure_number)
-        
-REM arrays are passed by reference to subroutines; no need to return the array
-        choose_figure(figure(), figure_number)
-        
-        
-        root_block_x = set_root_block_x(START_X, figure_number)
-        root_block_y = set_root_block_y(START_Y, figure_number)
-        
-        if !is_move_ok(figure(), root_block_x, root_block_y) then
-            draw_figure(root_block_x, root_block_y, figure(), figure_number)
-            wait TIMEQUANT*10
-            game_over()
-        fi
-        
-        if root_block_y > 0: clear_figure(root_block_x, root_block_y, figure())
-        root_block_y = root_block_y + 1
-        draw_figure(root_block_x, root_block_y, figure(), figure_number)
-                
-REM       "while figure is falling down and has not landed yet"-LOOP
-        while(1=1)
-            for i = 1 to TIMELOOPS
-                keystroke$ = inkey$(TIMEQUANT)
-                if !keystroke$="" then
-                    if keystroke$ = "right" then
-                        if is_move_ok(figure(), root_block_x+1, root_block_y) then
-                            clear_figure(root_block_x, root_block_y, figure())
-                            root_block_x = root_block_x + 1
-                            draw_figure(root_block_x, root_block_y, figure(), figure_number)
-                        fi
-                    elsif keystroke$ = "left" then
-                        if is_move_ok(figure(), root_block_x-1, root_block_y) then
-                            clear_figure(root_block_x, root_block_y, figure())
-                            root_block_x = root_block_x - 1
-                            draw_figure(root_block_x, root_block_y, figure(), figure_number)
-                        fi
-                    elsif keystroke$ = "down" then
-                        if is_move_ok(figure(), root_block_x, root_block_y+1) then
-                            clear_figure(root_block_x, root_block_y, figure())
-                            root_block_y = root_block_y + 1
-                            draw_figure(root_block_x, root_block_y, figure(), figure_number)
-                        fi
-                    elsif keystroke$ = "up" then
-                        figure_number = rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
-                        root_block_x = INTERMEDIATE_BLOCK_X
-                        root_block_y = INTERMEDIATE_BLOCK_Y
-                    elsif keystroke$ = "p" then
-                        pause_game()
-                    elsif keystroke$ = "q" or keystroke$ = "esc" then
-                        exit
-                    fi
-                fi
-            next
-            if root_block_y < 19 and is_move_ok(figure(), root_block_x, root_block_y+1) then
-                clear_figure(root_block_x, root_block_y, figure())
-                root_block_y = root_block_y + 1
-                draw_figure(root_block_x, root_block_y, figure(), figure_number)
-            else
-                turn_is_over(root_block_x, root_block_y, figure())
-                break
-            fi
-        wend
-    wend
-    print "not allowed to get to here!"
-    game_over()
-end sub
-
-main()
-
-REM ######################
 
 
 
@@ -1089,6 +1298,119 @@ end sub
 
 
 
+
+
+sub main()
+
+REM Testvariables
+            local y
+            local x
+            
+            
+    clear screen REM reading keystrokes with inkey$() needs 'clear screen'
+    open window WINDOW_WIDTH, WINDOW_HEIGHT
+    backcolor 0,0,0
+    REM backcolor does not work, that is why big black rectangle
+    color 0,0,0
+    fill rectangle 0,0 to WINDOW_WIDTH, WINDOW_HEIGHT
+    
+    REM draw field border
+    color 150,150,150
+    rectangle FIELD_OFFSET_X-1, FIELD_OFFSET_Y-1 to FIELD_OFFSET_X+FIELD_WIDTH+1, FIELD_OFFSET_Y+FIELD_HEIGHT+1
+    REM draw next figure window
+    rectangle PREVIEW_WINDOW_OFFSET_X-1, PREVIEW_WINDOW_OFFSET_Y-1 to PREVIEW_WINDOW_OFFSET_X+PREVIEW_WINDOW_WIDTH+1, PREVIEW_WINDOW_OFFSET_Y+PREVIEW_WINDOW_HEIGHT+1
+    
+    REM draw total lines counter
+    count_lines(LINES_TOTAL)
+    
+    local figure_number
+    local figure(4)
+    local next_figure_number
+    
+    next_figure_number = calculate_figure_number()
+    
+    local i
+    
+REM   "while not game over"-LOOP
+    while(1=1)
+        
+        figure_number = next_figure_number
+        next_figure_number = calculate_figure_number()
+        
+        display_preview_figure(next_figure_number)
+        
+REM arrays are passed by reference to subroutines; no need to return the array
+        choose_figure(figure(), figure_number)
+        
+        
+        root_block_x = set_root_block_x(START_X, figure_number)
+        root_block_y = set_root_block_y(START_Y, figure_number)
+        
+        if !is_move_ok(figure(), root_block_x, root_block_y) then
+            draw_figure(root_block_x, root_block_y, figure(), figure_number)
+            wait TIMEQUANT*10
+            game_over()
+        fi
+        
+        if root_block_y > 0: clear_figure(root_block_x, root_block_y, figure())
+        root_block_y = root_block_y + 1
+        draw_figure(root_block_x, root_block_y, figure(), figure_number)
+                
+REM       "while figure is falling down and has not landed yet"-LOOP
+        while(1=1)
+            for i = 1 to TIMELOOPS
+                keystroke$ = inkey$(TIMEQUANT)
+                if !keystroke$="" then
+                    if keystroke$ = "right" then
+                        if is_move_ok(figure(), root_block_x+1, root_block_y) then
+                            clear_figure(root_block_x, root_block_y, figure())
+                            root_block_x = root_block_x + 1
+                            draw_figure(root_block_x, root_block_y, figure(), figure_number)
+                        fi
+                    elsif keystroke$ = "left" then
+                        if is_move_ok(figure(), root_block_x-1, root_block_y) then
+                            clear_figure(root_block_x, root_block_y, figure())
+                            root_block_x = root_block_x - 1
+                            draw_figure(root_block_x, root_block_y, figure(), figure_number)
+                        fi
+                    elsif keystroke$ = "down" then
+                        if is_move_ok(figure(), root_block_x, root_block_y+1) then
+                            clear_figure(root_block_x, root_block_y, figure())
+                            root_block_y = root_block_y + 1
+                            draw_figure(root_block_x, root_block_y, figure(), figure_number)
+                        fi
+                    elsif keystroke$ = "up" or keystroke$ = "s" then
+                        figure_number = rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
+                        root_block_x = INTERMEDIATE_BLOCK_X
+                        root_block_y = INTERMEDIATE_BLOCK_Y
+                    elsif keystroke$ = "d" then
+                        figure_number = rotate_counterclockwise(root_block_x, root_block_y, figure(), figure_number)
+                        root_block_x = INTERMEDIATE_BLOCK_X
+                        root_block_y = INTERMEDIATE_BLOCK_Y
+                    elsif keystroke$ = "p" then
+                        pause_game()
+                    elsif keystroke$ = "q" or keystroke$ = "esc" then
+                        exit
+                    fi
+                fi
+            next
+            if root_block_y < 19 and is_move_ok(figure(), root_block_x, root_block_y+1) then
+                clear_figure(root_block_x, root_block_y, figure())
+                root_block_y = root_block_y + 1
+                draw_figure(root_block_x, root_block_y, figure(), figure_number)
+            else
+                turn_is_over(root_block_x, root_block_y, figure())
+                break
+            fi
+        wend
+    wend
+    print "not allowed to get to here!"
+    game_over()
+end sub
+
+main()
+
+REM ######################
 
 
 
