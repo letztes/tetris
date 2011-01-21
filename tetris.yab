@@ -911,6 +911,7 @@ REM Before any parts, define the local variables for this subroutine
     local lines_in_figure
     local lowest_complete_line
     local complete_lines_in_figure_cat$
+    local points_base REM base points number will be multiplied with level etc
     
     block_y_original = block_y
     complete_lines_in_figure_cat$ = "0000"
@@ -1052,7 +1053,7 @@ REM print text
     text LINES_COUNT_WINDOW_OFFSET_X+50,LINES_COUNT_WINDOW_OFFSET_Y+21,str$(LINES_TOTAL)
 REM gain speed if another 10 lines are full
 REM or the game just begun
-    if LINES_TOTAL - LEVEL_TOTAL * 10 >= 0 and TIMELOOPS > 1 or LEVEL_TOTAL = 0 then
+    if LINES_TOTAL - LEVEL_TOTAL * 10 >= 0 and TIMELOOPS > 1 then
         color 0,0,0
         fill rectangle LEVEL_COUNT_WINDOW_OFFSET_X,LEVEL_COUNT_WINDOW_OFFSET_Y to LEVEL_COUNT_WINDOW_OFFSET_X+LEVEL_COUNT_WINDOW_WIDTH, LEVEL_COUNT_WINDOW_OFFSET_Y+LEVEL_COUNT_WINDOW_HEIGHT
 REM print text LEVEL_TOTAL
@@ -1060,14 +1061,26 @@ REM print text LEVEL_TOTAL
         LEVEL_TOTAL = LEVEL_TOTAL + 1
         color 255,255,255
         text LEVEL_COUNT_WINDOW_OFFSET_X+10,LEVEL_COUNT_WINDOW_OFFSET_Y+20,"LEVEL: "
-        text LEVEL_COUNT_WINDOW_OFFSET_X+50,LEVEL_COUNT_WINDOW_OFFSET_Y+20,str$(LEVEL_TOTAL)
+        text LEVEL_COUNT_WINDOW_OFFSET_X+50,LEVEL_COUNT_WINDOW_OFFSET_Y+20,str$(LEVEL_TOTAL-1)
         
     fi
 REM clear window area for POINTS_TOTAL
     color 0,0,0
     fill rectangle POINTS_COUNT_WINDOW_OFFSET_X,POINTS_COUNT_WINDOW_OFFSET_Y to POINTS_COUNT_WINDOW_OFFSET_X+POINTS_COUNT_WINDOW_WIDTH, POINTS_COUNT_WINDOW_OFFSET_Y+POINTS_COUNT_WINDOW_HEIGHT
 REM print text POINTS_TOTAL
-    POINTS_TOTAL = POINTS_TOTAL + 133 * lines_dropped * LEVEL_TOTAL
+REM
+REM 1 line = 40 points
+REM 2 lines = 100 points 
+REM 3 lines = 300 points 
+REM 4 lines = 2400
+REM 1 line at level 2 = 80 points
+    switch lines_dropped
+        case 1: points_base = 40: break
+        case 2: points_base = 100: break
+        case 3: points_base = 300: break
+        case 4: points_base = 1200: break
+    end switch
+    POINTS_TOTAL = POINTS_TOTAL + points_base * LEVEL_TOTAL
     color 255,255,255
     text POINTS_COUNT_WINDOW_OFFSET_X+10,POINTS_COUNT_WINDOW_OFFSET_Y+20,"POINTS: "
     text POINTS_COUNT_WINDOW_OFFSET_X+60,POINTS_COUNT_WINDOW_OFFSET_Y+20,str$(POINTS_TOTAL)

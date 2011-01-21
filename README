@@ -23,6 +23,7 @@ Bring all the subroutines arguments in a consistent order: (figure_number, figur
 
 FEATURES
 
+Expand the field space so figures may stick out of field top when rotated
 Add a csv file for top score storage
 Displaying the keydescription, i.g. "Esc for exit"
 Brickrotation counterclockwise
