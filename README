@@ -23,6 +23,7 @@ Bring all the subroutines arguments in a consistent order: (figure_number, figur
 
 FEATURES
 
+Syntax check of topscore file
 Expand the field space so figures may stick out of field top when rotated
 Add a csv file for top score storage
 Displaying the keydescription, i.g. "Esc for exit"
@@ -32,10 +33,7 @@ Change color scheme of the brick with every 10 lines
 
 DONE recently
 
-csv file format:
-
-NAME (5 chars), SCORE (6 digits), LV (2 digits)
-ABCDE 012345 01
+Improve topscore printout
 
 
 

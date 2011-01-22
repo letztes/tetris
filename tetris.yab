@@ -463,9 +463,44 @@ sub game_over()
                     print total_user_input$
                     
                     color 0,0,0
-                    fill rectangle int(WINDOW_WIDTH/2)-10,int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*2 to WINDOW_WIDTH, WINDOW_HEIGHT
+                    fill rectangle int(WINDOW_WIDTH/2)-10,int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*3 to WINDOW_WIDTH, WINDOW_HEIGHT
                     color 150,150,150
-                    text int(WINDOW_WIDTH/2)-10, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*3, total_user_input$
+                    
+                    REM the better topscores
+                    for k=0 to i-1
+                        text int(WINDOW_WIDTH/2)-10, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k), TOPSCORE$(k)
+                    next
+                    
+                    REM the worse topscores
+                    for j=k+1 to 2
+                        text int(WINDOW_WIDTH/2)-10, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k), TOPSCORE$(k)
+                    next
+                    
+                    REM the player's topscore
+                    points_local_string$ = "000000"
+                    if POINTS_TOTAL < 10 then
+                        right$(points_local_string$, 1) = str$(POINTS_TOTAL)
+                    elsif POINTS_TOTAL < 100 then
+                        right$(points_local_string$, 2) = str$(POINTS_TOTAL)
+                    elsif POINTS_TOTAL < 1000 then
+                        right$(points_local_string$, 3) = str$(POINTS_TOTAL)
+                    elsif POINTS_TOTAL < 10000 then
+                        right$(points_local_string$, 4) = str$(POINTS_TOTAL)
+                    elsif POINTS_TOTAL < 100000 then
+                        right$(points_local_string$, 5) = str$(POINTS_TOTAL)
+                    elsif POINTS_TOTAL < 1000000 then
+                        points_local_string$ = str$(POINTS_TOTAL)
+                    fi
+                    
+                    level_total_string$ = "00"
+                    if LEVEL_TOTAL < 10 then
+                        mid$(level_total_string$, 2, 1) = str$(LEVEL_TOTAL)
+                    else
+                        level_total_string$ = str$(LEVEL_TOTAL)
+                    fi
+                    text int(WINDOW_WIDTH/2)+30, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k), points_local_string$
+                    text int(WINDOW_WIDTH/2)+75, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k), level_total_string$
+                    text int(WINDOW_WIDTH/2)-10, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k), total_user_input$
 
 
                 until(current_character_input$="enter")
