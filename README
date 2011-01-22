@@ -26,17 +26,16 @@ FEATURES
 Expand the field space so figures may stick out of field top when rotated
 Add a csv file for top score storage
 Displaying the keydescription, i.g. "Esc for exit"
-Brickrotation counterclockwise
 Change color scheme of the brick with every 10 lines
 
 
 
 DONE recently
 
-Implement counterclockwise rotation for T block
+csv file format:
 
-And fix the clockwise rotations. They worked, but
-not the same as in the nes version.
+NAME (5 chars), SCORE (6 digits), LV (2 digits)
+ABCDE 012345 01
 
 
 
