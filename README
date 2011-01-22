@@ -33,10 +33,10 @@ Change color scheme of the brick with every 10 lines
 
 DONE recently
 
-Add key 's' for rotate clockwise
-Add key 'd' for rotate counterclockwise
-Implement counterclockwise rotation for L block
-Implement counterclockwise rotation for J block
+Implement counterclockwise rotation for T block
+
+And fix the clockwise rotations. They worked, but
+not the same as in the nes version.
 
 
 

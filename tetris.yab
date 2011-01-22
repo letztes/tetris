@@ -3,7 +3,9 @@ REM requires yabasic 2.7x, download at www.yabasic.de
 
 REM Author:  Artur Spengler
 REM Website: www.github.com/letztes/tetris
-REM License: GPL
+REM License: This program is free software; you can redistribute it and/or
+REM          modify it under the same terms as yabasic itself.
+
 
 dim BLOCK_COLOR(4)
 dim rotated_figure(4)
@@ -550,7 +552,7 @@ REM local temporary_blocks come handy in this sub to make things shorter
             
         fi
         
-    REM bottom-right nose down horizontal L
+    REM bottom-right nose down horizontal J
     elsif figure_number=8 then
         figure_number_rotated = 11
         choose_figure(rotated_figure(), figure_number_rotated)
@@ -584,7 +586,7 @@ REM local temporary_blocks come handy in this sub to make things shorter
             
         fi
         
-    REM bottom-right nose up left horizontal L
+    REM bottom-right nose up left horizontal J
     elsif figure_number=10 then
         figure_number_rotated = 9
         choose_figure(rotated_figure(), figure_number_rotated)
@@ -687,14 +689,14 @@ REM local temporary_blocks come handy in this sub to make things shorter
         
     REM left bottom nose top horizontal T-brick
     elsif figure_number=16 then
-        figure_number_rotated = 17
+        figure_number_rotated = 19
         choose_figure(rotated_figure(), figure_number_rotated)
-        if is_move_ok(rotated_figure(), root_block_x+1, root_block_y) then
+        if is_move_ok(rotated_figure(), root_block_x+1, root_block_y+1) then
         
             clear_figure(root_block_x, root_block_y, figure())
             
             INTERMEDIATE_BLOCK_X = root_block_x+1
-            INTERMEDIATE_BLOCK_Y = root_block_y
+            INTERMEDIATE_BLOCK_Y = root_block_y+1
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
@@ -702,8 +704,8 @@ REM local temporary_blocks come handy in this sub to make things shorter
             
         fi
         
-    REM nose right vertical T-block
-    elsif figure_number=17 then
+    REM nose left vertical T-block
+    elsif figure_number=19 then
         figure_number_rotated = 18
         choose_figure(rotated_figure(), figure_number_rotated)
         if is_move_ok(rotated_figure(), root_block_x, root_block_y) then
@@ -721,7 +723,7 @@ REM local temporary_blocks come handy in this sub to make things shorter
         
     REM nose down horizontal T-block
     elsif figure_number=18 then
-        figure_number_rotated = 19
+        figure_number_rotated = 17
         choose_figure(rotated_figure(), figure_number_rotated)
         if is_move_ok(rotated_figure(), root_block_x, root_block_y) then
         
@@ -736,16 +738,16 @@ REM local temporary_blocks come handy in this sub to make things shorter
             
         fi
         
-    REM nose left vertical T-block
-    elsif figure_number=19 then
+    REM nose right vertical T-block
+    elsif figure_number=17 then
         figure_number_rotated = 16
         choose_figure(rotated_figure(), figure_number_rotated)
-        if is_move_ok(rotated_figure(), root_block_x-1, root_block_y) then
+        if is_move_ok(rotated_figure(), root_block_x-1, root_block_y-1) then
         
             clear_figure(root_block_x, root_block_y, figure())
             
             INTERMEDIATE_BLOCK_X = root_block_x-1
-            INTERMEDIATE_BLOCK_Y = root_block_y
+            INTERMEDIATE_BLOCK_Y = root_block_y-1
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
@@ -1007,12 +1009,12 @@ REM local temporary_blocks come handy in this sub to make things shorter
     elsif figure_number=16 then
         figure_number_rotated = 17
         choose_figure(rotated_figure(), figure_number_rotated)
-        if is_move_ok(rotated_figure(), root_block_x+1, root_block_y) then
+        if is_move_ok(rotated_figure(), root_block_x+1, root_block_y+1) then
         
             clear_figure(root_block_x, root_block_y, figure())
             
             INTERMEDIATE_BLOCK_X = root_block_x+1
-            INTERMEDIATE_BLOCK_Y = root_block_y
+            INTERMEDIATE_BLOCK_Y = root_block_y+1
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
@@ -1058,12 +1060,12 @@ REM local temporary_blocks come handy in this sub to make things shorter
     elsif figure_number=19 then
         figure_number_rotated = 16
         choose_figure(rotated_figure(), figure_number_rotated)
-        if is_move_ok(rotated_figure(), root_block_x-1, root_block_y) then
+        if is_move_ok(rotated_figure(), root_block_x-1, root_block_y-1) then
         
             clear_figure(root_block_x, root_block_y, figure())
             
             INTERMEDIATE_BLOCK_X = root_block_x-1
-            INTERMEDIATE_BLOCK_Y = root_block_y
+            INTERMEDIATE_BLOCK_Y = root_block_y-1
             figure_number = figure_number_rotated
             choose_figure(figure(), figure_number)
             
