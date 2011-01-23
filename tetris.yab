@@ -62,13 +62,36 @@ REM various
 TIMELOOPS = 15
 LINES_TOTAL = 0
 LEVEL_TOTAL = 0
-POINTS_TOTAL = 0
+POINTS_TOTAL = 8000
 
 dim TOPSCORE$(3)
 TOPSCORE$(0) = "HOWARD 010000 09"
 TOPSCORE$(1) = "OTASAN 007500 05"
-TOPSCORE$(2) = "XXXXXX 000000 00"
+TOPSCORE$(2) = "YOU    000000 00"
 
+sub check_topscore_file()
+    local filehandle
+    local i
+    
+    filehandle = open("topscore.txt", "r")
+    if filehandle=0 then
+        filehandle = open("topscore.txt", "w")
+        if filehandle=0 then
+        	error "Could not open 'topscore.txt' for writing"
+            exit
+        fi
+        for i=0 to arraysize(TOPSCORE$(), 1)
+            print #filehandle TOPSCORE$(i)
+        next
+        close filehandle
+    else
+        for i=0 to arraysize(TOPSCORE$(), 1)
+            line input #filehandle TOPSCORE$(i)
+        next
+        close filehandle
+    fi
+    
+end sub
 
 
 
@@ -418,7 +441,7 @@ end sub
 
 
 sub game_over()
-    local filedescriptor
+    local filehandle
     local i
     
     color 0,0,0
@@ -427,91 +450,104 @@ sub game_over()
     text int(WINDOW_WIDTH/2)-25, int(WINDOW_HEIGHT/2), "Game Over"
     inkey$
     
-    filedescriptor = open("topscore.txt", "r")
-    if filedescriptor=0 then
-        filedescriptor = open("topscore.txt", "w")
-        if filedescriptor=0 then
-            exit
-        fi
-        for i=0 to 2
-            print #filedescriptor TOPSCORE$(i)
-        next
-        close filedescriptor
+    check_topscore_file()
+    
+    local current_character_input$
+    local total_user_input$
+    
+    for i=0 to arraysize(TOPSCORE$(), 1)
+        topscore_line_substring = val(mid$(TOPSCORE$(i), 8, 6))
+        if POINTS_TOTAL >= topscore_line_substring then
         
-    fi
-    filedescriptor = open("topscore.txt", "r")
-    if filedescriptor=0 then
-        error "Could not open 'topscore.txt' for reading"
-        exit
-    else
-        local current_character_input$
-        local total_user_input$
-        i=0
-        while(not eof(filedescriptor))
-            line input #filedescriptor topscore_line$
-            TOPSCORE$(i) = topscore_line$
-            topscore_line_substring = val(mid$(topscore_line$, 8, 6))
-            if POINTS_TOTAL >= topscore_line_substring then
-                print topscore_line$
-                print topscore_line_substring
-                text int(WINDOW_WIDTH/2)-60, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH, "You are a tetris master."
-                text int(WINDOW_WIDTH/2)-60, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*2, "Please enter your name."
+            color 0,0,0
+	        fill rectangle int(WINDOW_WIDTH/2)-10,int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*3 to WINDOW_WIDTH, WINDOW_HEIGHT
+	        color 150,150,150
+	        
+	        REM the better topscores
+	        for k=0 to i-1
+	            text int(WINDOW_WIDTH/2)-10, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k), TOPSCORE$(k)
+	        next
+	        
+	        REM the worse topscores
+	        for j=2 to k+1 step -1
+	        	print "j: "
+	        	print j
+	            text int(WINDOW_WIDTH/2)-10, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+j), TOPSCORE$(j)
+	            TOPSCORE$(j) = TOPSCORE$(j-1)
+	        next
+	        
+	        REM the player's topscore
+	        points_local_string$ = "000000"
+	        if POINTS_TOTAL < 10 then
+	            right$(points_local_string$, 1) = str$(POINTS_TOTAL)
+	        elsif POINTS_TOTAL < 100 then
+	            right$(points_local_string$, 2) = str$(POINTS_TOTAL)
+	        elsif POINTS_TOTAL < 1000 then
+	            right$(points_local_string$, 3) = str$(POINTS_TOTAL)
+	        elsif POINTS_TOTAL < 10000 then
+	            right$(points_local_string$, 4) = str$(POINTS_TOTAL)
+	        elsif POINTS_TOTAL < 100000 then
+	            right$(points_local_string$, 5) = str$(POINTS_TOTAL)
+	        elsif POINTS_TOTAL < 1000000 then
+	            points_local_string$ = str$(POINTS_TOTAL)
+	        fi
+	        
+	        level_local_string$ = "00"
+	        if LEVEL_TOTAL < 10 then
+	            right$(level_local_string$, 1) = str$(LEVEL_TOTAL-1)
+	        else
+	            level_local_string$ = str$(LEVEL_TOTAL-1)
+	        fi
                 
-                repeat
-                    current_character_input$=inkey$(0.5)
-                    total_user_input$ = check_character_input$(current_character_input$, total_user_input$)
-                    print total_user_input$
-                    
-                    color 0,0,0
-                    fill rectangle int(WINDOW_WIDTH/2)-10,int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*3 to WINDOW_WIDTH, WINDOW_HEIGHT
-                    color 150,150,150
-                    
-                    REM the better topscores
-                    for k=0 to i-1
-                        text int(WINDOW_WIDTH/2)-10, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k), TOPSCORE$(k)
-                    next
-                    
-                    REM the worse topscores
-                    for j=k+1 to 2
-                        text int(WINDOW_WIDTH/2)-10, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k), TOPSCORE$(k)
-                    next
-                    
-                    REM the player's topscore
-                    points_local_string$ = "000000"
-                    if POINTS_TOTAL < 10 then
-                        right$(points_local_string$, 1) = str$(POINTS_TOTAL)
-                    elsif POINTS_TOTAL < 100 then
-                        right$(points_local_string$, 2) = str$(POINTS_TOTAL)
-                    elsif POINTS_TOTAL < 1000 then
-                        right$(points_local_string$, 3) = str$(POINTS_TOTAL)
-                    elsif POINTS_TOTAL < 10000 then
-                        right$(points_local_string$, 4) = str$(POINTS_TOTAL)
-                    elsif POINTS_TOTAL < 100000 then
-                        right$(points_local_string$, 5) = str$(POINTS_TOTAL)
-                    elsif POINTS_TOTAL < 1000000 then
-                        points_local_string$ = str$(POINTS_TOTAL)
-                    fi
-                    
-                    level_total_string$ = "00"
-                    if LEVEL_TOTAL < 10 then
-                        mid$(level_total_string$, 2, 1) = str$(LEVEL_TOTAL)
-                    else
-                        level_total_string$ = str$(LEVEL_TOTAL)
-                    fi
-                    text int(WINDOW_WIDTH/2)+30, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k), points_local_string$
-                    text int(WINDOW_WIDTH/2)+75, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k), level_total_string$
-                    text int(WINDOW_WIDTH/2)-10, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k), total_user_input$
+                
+            text int(WINDOW_WIDTH/2)-60, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH, "You are a tetris master."
+            text int(WINDOW_WIDTH/2)-60, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*2, "Please enter your name."
+            
+            
+            
+            repeat
+                current_character_input$=inkey$(0.5)
+                
+                
+			    total_user_input$ = check_character_input$(current_character_input$, total_user_input$)
+			    print total_user_input$
+                
+                text int(WINDOW_WIDTH/2)-10, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k), total_user_input$
+                text int(WINDOW_WIDTH/2)+30, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k), points_local_string$
+                text int(WINDOW_WIDTH/2)+75, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k), level_local_string$
 
 
-                until(current_character_input$="enter")
+            until(current_character_input$="enter")
+            total_user_input$ = left$(total_user_input$, len(total_user_input$)-5)
+            
+            color 0,0,0
+            fill rectangle int(WINDOW_WIDTH/2)-10,int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(3+k) to WINDOW_WIDTH,int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k)
+            color 150,150,150
+            text int(WINDOW_WIDTH/2)+30, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k), points_local_string$
+            text int(WINDOW_WIDTH/2)+75, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k), level_local_string$
+            text int(WINDOW_WIDTH/2)-10, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k), total_user_input$
+            
+            
+            
+            left$(TOPSCORE$(i), 6) = "      "
+            left$(TOPSCORE$(i), len(total_user_input$)) = total_user_input$
+            mid$(TOPSCORE$(i), 8, 6) = points_local_string$
+            right$(TOPSCORE$(i), 2) = level_local_string$
+            break
 
 
-            fi
-            i=i+1
-            if i=3 break
-        wend
-        close filedescriptor
+        fi
+    next
+    filehandle = open("topscore.txt", "w")
+    if filehandle=0 then
+    	error "Could not open 'topscore.txt' for writing"
+        exit
     fi
+    for i=0 to arraysize(TOPSCORE$(), 1)
+        print #filehandle TOPSCORE$(i)
+        print TOPSCORE$(i)
+    next
+    close filehandle
     
     inkey$
     exit
@@ -1282,6 +1318,12 @@ REM exit the routine otherwise
         
         i=i+1
     next
+    
+REM Add some points as reward for successful move
+    points_base = block_y
+    POINTS_TOTAL = POINTS_TOTAL + points_base * LEVEL_TOTAL
+    display_points()
+    
 REM If no lines were completed, exit the subroutine
     if lines_dropped = 0 then
         return
@@ -1398,15 +1440,13 @@ REM print text LEVEL_TOTAL
         text LEVEL_COUNT_WINDOW_OFFSET_X+50,LEVEL_COUNT_WINDOW_OFFSET_Y+20,str$(LEVEL_TOTAL-1)
         
     fi
-REM clear window area for POINTS_TOTAL
-    color 0,0,0
-    fill rectangle POINTS_COUNT_WINDOW_OFFSET_X,POINTS_COUNT_WINDOW_OFFSET_Y to POINTS_COUNT_WINDOW_OFFSET_X+POINTS_COUNT_WINDOW_WIDTH, POINTS_COUNT_WINDOW_OFFSET_Y+POINTS_COUNT_WINDOW_HEIGHT
+    
 REM print text POINTS_TOTAL
 REM
 REM 1 line = 40 points
 REM 2 lines = 100 points 
 REM 3 lines = 300 points 
-REM 4 lines = 2400
+REM 4 lines = 1200
 REM 1 line at level 2 = 80 points
     switch lines_dropped
         case 1: points_base = 40: break
@@ -1415,12 +1455,21 @@ REM 1 line at level 2 = 80 points
         case 4: points_base = 1200: break
     end switch
     POINTS_TOTAL = POINTS_TOTAL + points_base * LEVEL_TOTAL
+    display_points()
+    
+end sub
+
+sub display_points()
+
+REM clear window area for POINTS_TOTAL
+    color 0,0,0
+    fill rectangle POINTS_COUNT_WINDOW_OFFSET_X,POINTS_COUNT_WINDOW_OFFSET_Y to POINTS_COUNT_WINDOW_OFFSET_X+POINTS_COUNT_WINDOW_WIDTH, POINTS_COUNT_WINDOW_OFFSET_Y+POINTS_COUNT_WINDOW_HEIGHT
+    
     color 255,255,255
     text POINTS_COUNT_WINDOW_OFFSET_X+10,POINTS_COUNT_WINDOW_OFFSET_Y+20,"POINTS: "
     text POINTS_COUNT_WINDOW_OFFSET_X+60,POINTS_COUNT_WINDOW_OFFSET_Y+20,str$(POINTS_TOTAL)
+    
 end sub
-
-
 
 
 
