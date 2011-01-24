@@ -7,7 +7,6 @@ TODO
 
 FIXES:
 
-Fix that the topscores are not displayed properly, though written correct to file: The current score is placed where the previous entry was instead of dropping the rank of the previous entry down
 Fix the overwriting of solid blocks by new appearing blocks
 
 
@@ -24,7 +23,6 @@ Bring all the subroutines arguments in a consistent order: (figure_number, figur
 
 FEATURES
 
-Add blinking cursor for topscore entry screen
 Syntax check of topscore file
 Expand the field space so figures may stick out of field top when rotated
 Displaying the keydescription, i.g. "Esc for exit"
@@ -34,8 +32,8 @@ Change color scheme of the brick with every 10 lines
 
 DONE recently
 
-Improve topscore printout even better
 
+Add blinking cursor for topscore entry screen
 
 
 

@@ -72,13 +72,13 @@ TOPSCORE$(2) = "YOU    000000 00"
 sub check_topscore_file()
     local filehandle
     local i
+    print "test"
     
     filehandle = open("topscore.txt", "r")
     if filehandle=0 then
         filehandle = open("topscore.txt", "w")
         if filehandle=0 then
         	error "Could not open 'topscore.txt' for writing"
-            exit
         fi
         for i=0 to arraysize(TOPSCORE$(), 1)
             print #filehandle TOPSCORE$(i)
@@ -87,6 +87,7 @@ sub check_topscore_file()
     else
         for i=0 to arraysize(TOPSCORE$(), 1)
             line input #filehandle TOPSCORE$(i)
+            print TOPSCORE$(i)
         next
         close filehandle
     fi
@@ -470,9 +471,7 @@ sub game_over()
 	        
 	        REM the worse topscores
 	        for j=2 to k+1 step -1
-	        	print "j: "
-	        	print j
-	            text int(WINDOW_WIDTH/2)-10, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+j), TOPSCORE$(j)
+	            text int(WINDOW_WIDTH/2)-10, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+j), TOPSCORE$(j-1)
 	            TOPSCORE$(j) = TOPSCORE$(j-1)
 	        next
 	        
@@ -504,19 +503,23 @@ sub game_over()
             text int(WINDOW_WIDTH/2)-60, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*2, "Please enter your name."
             
             
-            
             repeat
                 current_character_input$=inkey$(0.5)
                 
-                
 			    total_user_input$ = check_character_input$(current_character_input$, total_user_input$)
-			    print total_user_input$
+			    
+			    cursor$=blink_cursor$()
+			    
+			    
+                color 0,0,0
+                fill rectangle int(WINDOW_WIDTH/2)-10,int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(3+k) to WINDOW_WIDTH,int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k)
+                color 150,150,150
                 
-                text int(WINDOW_WIDTH/2)-10, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k), total_user_input$
-                text int(WINDOW_WIDTH/2)+30, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k), points_local_string$
-                text int(WINDOW_WIDTH/2)+75, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k), level_local_string$
+                text int(WINDOW_WIDTH/2)-10, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k), total_user_input$+cursor$
+                text int(WINDOW_WIDTH/2)+30, int(WINDOW_HEIGHT/2)+BLOCK_WIDTH*(4+k), points_local_string$+" "+level_local_string$
 
-
+                cursor_blinker=cursor_blinker+1
+                
             until(current_character_input$="enter")
             total_user_input$ = left$(total_user_input$, len(total_user_input$)-5)
             
@@ -553,6 +556,18 @@ sub game_over()
     exit
 end sub
 
+
+sub blink_cursor$()
+    static i
+    
+    i=i+1
+    
+    if mod(i, 2) = 0 then
+        i=0
+        return "_"
+    fi
+    
+end sub
 
 
 sub is_bad_input(current_character_input$)
@@ -1425,8 +1440,7 @@ REM clear rectangle for text and print LINES_TOTAL
     fill rectangle LINES_COUNT_WINDOW_OFFSET_X,LINES_COUNT_WINDOW_OFFSET_Y to LINES_COUNT_WINDOW_OFFSET_X+LINES_COUNT_WINDOW_WIDTH, LINES_COUNT_WINDOW_OFFSET_Y+LINES_COUNT_WINDOW_HEIGHT
 REM print text
     color 255,255,255
-    text LINES_COUNT_WINDOW_OFFSET_X+10,LINES_COUNT_WINDOW_OFFSET_Y+20,"Lines: "
-    text LINES_COUNT_WINDOW_OFFSET_X+50,LINES_COUNT_WINDOW_OFFSET_Y+21,str$(LINES_TOTAL)
+    text LINES_COUNT_WINDOW_OFFSET_X+10,LINES_COUNT_WINDOW_OFFSET_Y+20,"Lines: "+str$(LINES_TOTAL)
 REM gain speed if another 10 lines are full
 REM or the game just begun
     if LINES_TOTAL - LEVEL_TOTAL * 10 >= 0 and TIMELOOPS > 1 then
@@ -1436,8 +1450,7 @@ REM print text LEVEL_TOTAL
         TIMELOOPS = TIMELOOPS - 1
         LEVEL_TOTAL = LEVEL_TOTAL + 1
         color 255,255,255
-        text LEVEL_COUNT_WINDOW_OFFSET_X+10,LEVEL_COUNT_WINDOW_OFFSET_Y+20,"LEVEL: "
-        text LEVEL_COUNT_WINDOW_OFFSET_X+50,LEVEL_COUNT_WINDOW_OFFSET_Y+20,str$(LEVEL_TOTAL-1)
+        text LEVEL_COUNT_WINDOW_OFFSET_X+10,LEVEL_COUNT_WINDOW_OFFSET_Y+20,"LEVEL: "+str$(LEVEL_TOTAL-1)
         
     fi
     
@@ -1466,8 +1479,7 @@ REM clear window area for POINTS_TOTAL
     fill rectangle POINTS_COUNT_WINDOW_OFFSET_X,POINTS_COUNT_WINDOW_OFFSET_Y to POINTS_COUNT_WINDOW_OFFSET_X+POINTS_COUNT_WINDOW_WIDTH, POINTS_COUNT_WINDOW_OFFSET_Y+POINTS_COUNT_WINDOW_HEIGHT
     
     color 255,255,255
-    text POINTS_COUNT_WINDOW_OFFSET_X+10,POINTS_COUNT_WINDOW_OFFSET_Y+20,"POINTS: "
-    text POINTS_COUNT_WINDOW_OFFSET_X+60,POINTS_COUNT_WINDOW_OFFSET_Y+20,str$(POINTS_TOTAL)
+    text POINTS_COUNT_WINDOW_OFFSET_X+10,POINTS_COUNT_WINDOW_OFFSET_Y+20,"POINTS: "+str$(POINTS_TOTAL)
     
 end sub
 
