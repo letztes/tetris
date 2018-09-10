@@ -72,7 +72,6 @@ TOPSCORE$(2) = "YOU    000000 00"
 sub check_topscore_file()
     local filehandle
     local i
-    print "test"
     
     filehandle = open("topscore.txt", "r")
     if filehandle=0 then
@@ -456,7 +455,7 @@ sub game_over()
     local current_character_input$
     local total_user_input$
     
-    for i=0 to arraysize(TOPSCORE$(), 1)
+    for i=0 to arraysize(TOPSCORE$(), 1)-1
         topscore_line_substring = val(mid$(TOPSCORE$(i), 8, 6))
         if POINTS_TOTAL >= topscore_line_substring then
         
@@ -1518,7 +1517,6 @@ REM Testvariables
     next_figure_number = calculate_figure_number()
     
     local i
-    
 REM   "while not game over"-LOOP
     while(1=1)
         
