@@ -10,6 +10,132 @@ REM          modify it under the same terms as yabasic itself.
 dim BLOCK_COLOR(4)
 dim rotated_figure(4)
 
+dim CLOCKWISE_ROTATED_FIGURE_NUMBER(19)
+CLOCKWISE_ROTATED_FIGURE_NUMBER(1)  = 2  REM horizontal stick rotates to vertical stick
+CLOCKWISE_ROTATED_FIGURE_NUMBER(2)  = 1  REM vertical stick
+CLOCKWISE_ROTATED_FIGURE_NUMBER(3)  = 3  REM No need to rotate the square block
+CLOCKWISE_ROTATED_FIGURE_NUMBER(4)  = 5  REM bottom-left: nose left down horizontal L
+CLOCKWISE_ROTATED_FIGURE_NUMBER(5)  = 6  REM bottom-right nose top left vertical L
+CLOCKWISE_ROTATED_FIGURE_NUMBER(6)  = 7  REM bottom-left nose up horizontal L
+CLOCKWISE_ROTATED_FIGURE_NUMBER(7)  = 4  REM nose bottom right vertical L
+CLOCKWISE_ROTATED_FIGURE_NUMBER(8)  = 9  REM bottom-right nose down horizontal L
+CLOCKWISE_ROTATED_FIGURE_NUMBER(9)  = 10 REM nose bottom left vertical L
+CLOCKWISE_ROTATED_FIGURE_NUMBER(10) = 11 REM bottom-right nose up left horizontal L
+CLOCKWISE_ROTATED_FIGURE_NUMBER(11) = 8  REM bottom-left nose top right vertical L
+CLOCKWISE_ROTATED_FIGURE_NUMBER(12) = 13 REM left bottom horizontal S-block 
+CLOCKWISE_ROTATED_FIGURE_NUMBER(13) = 12 REM right bottom vertical S-block
+CLOCKWISE_ROTATED_FIGURE_NUMBER(14) = 15 REM right bottom horizontal S-block
+CLOCKWISE_ROTATED_FIGURE_NUMBER(15) = 14 REM left bottom vertical S-block
+CLOCKWISE_ROTATED_FIGURE_NUMBER(16) = 17 REM left bottom nose top horizontal T-brick
+CLOCKWISE_ROTATED_FIGURE_NUMBER(17) = 18 REM nose right vertical T-block
+CLOCKWISE_ROTATED_FIGURE_NUMBER(18) = 19 REM nose down horizontal T-block
+CLOCKWISE_ROTATED_FIGURE_NUMBER(19) = 16 REM nose left vertical T-block
+
+dim CLOCKWISE_ROTATED_X_SHIFT(19)
+CLOCKWISE_ROTATED_X_SHIFT(1)  = 1
+CLOCKWISE_ROTATED_X_SHIFT(2)  = -1
+CLOCKWISE_ROTATED_X_SHIFT(3)  = 0
+CLOCKWISE_ROTATED_X_SHIFT(4)  = 1
+CLOCKWISE_ROTATED_X_SHIFT(5)  = -1
+CLOCKWISE_ROTATED_X_SHIFT(6)  = 2
+CLOCKWISE_ROTATED_X_SHIFT(7)  = -2
+CLOCKWISE_ROTATED_X_SHIFT(8)  = -2
+CLOCKWISE_ROTATED_X_SHIFT(9)  = 2
+CLOCKWISE_ROTATED_X_SHIFT(10) = -1
+CLOCKWISE_ROTATED_X_SHIFT(11) = 1
+CLOCKWISE_ROTATED_X_SHIFT(12) = 1
+CLOCKWISE_ROTATED_X_SHIFT(13) = -1
+CLOCKWISE_ROTATED_X_SHIFT(14) = -1
+CLOCKWISE_ROTATED_X_SHIFT(15) = 1
+CLOCKWISE_ROTATED_X_SHIFT(16) = 1
+CLOCKWISE_ROTATED_X_SHIFT(17) = 0
+CLOCKWISE_ROTATED_X_SHIFT(18) = 0
+CLOCKWISE_ROTATED_X_SHIFT(19) = -1
+
+dim CLOCKWISE_ROTATED_Y_SHIFT(19)
+CLOCKWISE_ROTATED_Y_SHIFT(1)  = 1
+CLOCKWISE_ROTATED_Y_SHIFT(2)  = -1
+CLOCKWISE_ROTATED_Y_SHIFT(3)  = 0
+CLOCKWISE_ROTATED_Y_SHIFT(4)  = 0
+CLOCKWISE_ROTATED_Y_SHIFT(5)  = -1
+CLOCKWISE_ROTATED_Y_SHIFT(6)  = 1
+CLOCKWISE_ROTATED_Y_SHIFT(7)  = 0
+CLOCKWISE_ROTATED_Y_SHIFT(8)  = 0
+CLOCKWISE_ROTATED_Y_SHIFT(9)  = -1
+CLOCKWISE_ROTATED_Y_SHIFT(10) = 1
+CLOCKWISE_ROTATED_Y_SHIFT(11) = 0
+CLOCKWISE_ROTATED_Y_SHIFT(12) = 0
+CLOCKWISE_ROTATED_Y_SHIFT(13) = 0
+CLOCKWISE_ROTATED_Y_SHIFT(14) = 0
+CLOCKWISE_ROTATED_Y_SHIFT(15) = 0
+CLOCKWISE_ROTATED_Y_SHIFT(16) = 1
+CLOCKWISE_ROTATED_Y_SHIFT(17) = 0
+CLOCKWISE_ROTATED_Y_SHIFT(18) = 0
+CLOCKWISE_ROTATED_Y_SHIFT(19) = -1
+
+dim COUNTERCLOCKWISE_ROTATED_FIGURE_NUMBER(19)
+COUNTERCLOCKWISE_ROTATED_FIGURE_NUMBER(1)  = 2
+COUNTERCLOCKWISE_ROTATED_FIGURE_NUMBER(2)  = 1
+COUNTERCLOCKWISE_ROTATED_FIGURE_NUMBER(3)  = 3
+COUNTERCLOCKWISE_ROTATED_FIGURE_NUMBER(4)  = 7
+COUNTERCLOCKWISE_ROTATED_FIGURE_NUMBER(5)  = 4
+COUNTERCLOCKWISE_ROTATED_FIGURE_NUMBER(6)  = 5
+COUNTERCLOCKWISE_ROTATED_FIGURE_NUMBER(7)  = 6
+COUNTERCLOCKWISE_ROTATED_FIGURE_NUMBER(8)  = 11
+COUNTERCLOCKWISE_ROTATED_FIGURE_NUMBER(9)  = 8
+COUNTERCLOCKWISE_ROTATED_FIGURE_NUMBER(10) = 9
+COUNTERCLOCKWISE_ROTATED_FIGURE_NUMBER(11) = 10
+COUNTERCLOCKWISE_ROTATED_FIGURE_NUMBER(12) = 13
+COUNTERCLOCKWISE_ROTATED_FIGURE_NUMBER(13) = 12
+COUNTERCLOCKWISE_ROTATED_FIGURE_NUMBER(14) = 15
+COUNTERCLOCKWISE_ROTATED_FIGURE_NUMBER(15) = 14
+COUNTERCLOCKWISE_ROTATED_FIGURE_NUMBER(16) = 19
+COUNTERCLOCKWISE_ROTATED_FIGURE_NUMBER(17) = 16
+COUNTERCLOCKWISE_ROTATED_FIGURE_NUMBER(18) = 17
+COUNTERCLOCKWISE_ROTATED_FIGURE_NUMBER(19) = 18
+
+dim COUNTERCLOCKWISE_ROTATED_X_SHIFT(19)
+COUNTERCLOCKWISE_ROTATED_X_SHIFT(1)  = 1
+COUNTERCLOCKWISE_ROTATED_X_SHIFT(2)  = -1
+COUNTERCLOCKWISE_ROTATED_X_SHIFT(3)  = 0
+COUNTERCLOCKWISE_ROTATED_X_SHIFT(4)  = 1
+COUNTERCLOCKWISE_ROTATED_X_SHIFT(7)  = -1
+COUNTERCLOCKWISE_ROTATED_X_SHIFT(6)  = 2
+COUNTERCLOCKWISE_ROTATED_X_SHIFT(5)  = -2
+COUNTERCLOCKWISE_ROTATED_X_SHIFT(8)  = -2
+COUNTERCLOCKWISE_ROTATED_X_SHIFT(11) = 2
+COUNTERCLOCKWISE_ROTATED_X_SHIFT(10) = -1
+COUNTERCLOCKWISE_ROTATED_X_SHIFT(9)  = 1
+COUNTERCLOCKWISE_ROTATED_X_SHIFT(12) = 1
+COUNTERCLOCKWISE_ROTATED_X_SHIFT(13) = -1
+COUNTERCLOCKWISE_ROTATED_X_SHIFT(14) = -1
+COUNTERCLOCKWISE_ROTATED_X_SHIFT(15) = 1
+COUNTERCLOCKWISE_ROTATED_X_SHIFT(16) = 1
+COUNTERCLOCKWISE_ROTATED_X_SHIFT(19) = 0
+COUNTERCLOCKWISE_ROTATED_X_SHIFT(18) = 0
+COUNTERCLOCKWISE_ROTATED_X_SHIFT(17) = -1
+
+dim COUNTERCLOCKWISE_ROTATED_Y_SHIFT(19)
+COUNTERCLOCKWISE_ROTATED_Y_SHIFT(1)  = 1
+COUNTERCLOCKWISE_ROTATED_Y_SHIFT(2)  = -1
+COUNTERCLOCKWISE_ROTATED_Y_SHIFT(3)  = 0
+COUNTERCLOCKWISE_ROTATED_Y_SHIFT(4)  = 0
+COUNTERCLOCKWISE_ROTATED_Y_SHIFT(5)  = 0
+COUNTERCLOCKWISE_ROTATED_Y_SHIFT(6)  = 1
+COUNTERCLOCKWISE_ROTATED_Y_SHIFT(7)  = -1
+COUNTERCLOCKWISE_ROTATED_Y_SHIFT(8)  = 0
+COUNTERCLOCKWISE_ROTATED_Y_SHIFT(9) = 0
+COUNTERCLOCKWISE_ROTATED_Y_SHIFT(10) = 1
+COUNTERCLOCKWISE_ROTATED_Y_SHIFT(11)  = -1
+COUNTERCLOCKWISE_ROTATED_Y_SHIFT(12) = 0
+COUNTERCLOCKWISE_ROTATED_Y_SHIFT(13) = 0
+COUNTERCLOCKWISE_ROTATED_Y_SHIFT(14) = 0
+COUNTERCLOCKWISE_ROTATED_Y_SHIFT(15) = 0
+COUNTERCLOCKWISE_ROTATED_Y_SHIFT(16) = 1
+COUNTERCLOCKWISE_ROTATED_Y_SHIFT(17) = -1
+COUNTERCLOCKWISE_ROTATED_Y_SHIFT(18) = 0
+COUNTERCLOCKWISE_ROTATED_Y_SHIFT(19) = 0
+
 COLUMNS = 10
 ROWS = 20
 
@@ -631,179 +757,6 @@ sub rotate(figure(), figure_number, figure_number_rotated, x_shift, y_shift)
 	return figure_number
 end sub
 
-sub rotate_counterclockwise(root_block_x, root_block_y, figure(), figure_number)
-
-	REM global INTERMEDIATE_BLOCKS are necessary because the sub cannot return multiple values
-	REM local temporary_blocks come handy in this sub to make things shorter
-	
-    INTERMEDIATE_BLOCK_X = root_block_x
-    INTERMEDIATE_BLOCK_Y = root_block_y
-    
-    REM horizontal stick
-    if figure_number=1 then
-        figure_number = rotate(figure(), figure_number, 2, 1, 1)
-        
-    REM vertical stick
-    elsif figure_number=2 then
-        figure_number = rotate(figure(), figure_number, 1, -1, -1)
-        
-    REM No need to rotate the square block
-        
-    REM bottom-left: nose left down horizontal L
-    elsif figure_number=4 then
-        figure_number = rotate(figure(), figure_number, 7, 2, 0)
-        
-    REM bottom-right nose top left vertical L
-    elsif figure_number=7 then
-        figure_number = rotate(figure(), figure_number, 6, -2, -1)
-    
-    REM bottom-left nose down horizontal L
-    elsif figure_number=6 then
-        figure_number = rotate(figure(), figure_number, 5, 1, 1)
-        
-    REM nose bottom right vertical L
-    elsif figure_number=5 then
-        figure_number = rotate(figure(), figure_number, 4, -1, 0)
-        
-    REM bottom-right nose down horizontal J
-    elsif figure_number=8 then
-        figure_number = rotate(figure(), figure_number, 11, -1, 0)
-        
-    REM bottom-left: nose top right vertical J
-    elsif figure_number=11 then
-        figure_number = rotate(figure(), figure_number, 10, 1, -1)
-        
-    REM bottom-right nose up left horizontal J
-    elsif figure_number=10 then
-        figure_number = rotate(figure(), figure_number, 9, -2, 1)
-        
-    REM bottom-left: nose bottom left vertical L
-    elsif figure_number=9 then
-        figure_number = rotate(figure(), figure_number, 8, 2, 0)
-        
-    REM left bottom horizontal S-block    
-    elsif figure_number=12 then
-        figure_number = rotate(figure(), figure_number, 13, 1, 0)
-        
-    REM right bottom vertical S-block
-    elsif figure_number=13 then
-        figure_number = rotate(figure(), figure_number, 12, -1, 0)
-        
-    REM right bottom horizontal S-block    
-    elsif figure_number=14 then
-        figure_number = rotate(figure(), figure_number, 15, -1, 0)
-        
-    REM left bottom vertical S-block
-    elsif figure_number=15 then
-        figure_number = rotate(figure(), figure_number, 14, 1, 0)
-        
-    REM left bottom nose top horizontal T-brick
-    elsif figure_number=16 then
-        figure_number = rotate(figure(), figure_number, 19, 1, 1)
-        
-    REM nose left vertical T-block
-    elsif figure_number=19 then
-        figure_number = rotate(figure(), figure_number, 18, 0, 0)
-        
-    REM nose down horizontal T-block
-    elsif figure_number=18 then
-        figure_number = rotate(figure(), figure_number, 17, 0, 0)
-        
-    REM nose right vertical T-block
-    elsif figure_number=17 then
-        figure_number = rotate(figure(), figure_number, 16, -1, -1)
-    fi
-    
-    return figure_number
-
-end sub
-
-
-sub rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
-
-	REM global INTERMEDIATE_BLOCKS are necessary because the sub cannot return multiple values
-	REM local temporary_blocks come handy in this sub to make things shorter
-    INTERMEDIATE_BLOCK_X = root_block_x
-    INTERMEDIATE_BLOCK_Y = root_block_y
-    
-    REM horizontal stick
-    if figure_number=1 then
-        figure_number = rotate(figure(), figure_number, 2, 1, 1)
-        
-    REM vertical stick
-    elsif figure_number=2 then
-        figure_number = rotate(figure(), figure_number, 1, -1, -1)
-        
-    REM No need to rotate the square block
-    
-    REM bottom-left nose down horizontal L
-    elsif figure_number=4 then
-        figure_number = rotate(figure(), figure_number, 5, 1, 0)
-        
-    REM bottom-right nose top left vertical L
-    elsif figure_number=5 then
-        figure_number = rotate(figure(), figure_number, 6, -1, -1)
-        
-    REM bottom-left nose up horizontal L
-    elsif figure_number=6 then
-        figure_number = rotate(figure(), figure_number, 7, 2, 1)
-        
-    REM nose bottom right vertical L
-    elsif figure_number=7 then
-        figure_number = rotate(figure(), figure_number, 4, -2, 0)
-        
-    REM bottom-right nose down horizontal L
-    elsif figure_number=8 then
-        figure_number = rotate(figure(), figure_number, 9, -2, 0)
-        
-    REM nose bottom left vertical L
-    elsif figure_number=9 then
-        figure_number = rotate(figure(), figure_number, 10, 2, -1)
-        
-    REM bottom-right nose up left horizontal L
-    elsif figure_number=10 then
-        figure_number = rotate(figure(), figure_number, 11, -1, 1)
-        
-    REM bottom-left nose top right vertical L
-    elsif figure_number=11 then
-        figure_number = rotate(figure(), figure_number, 8, 1, 0)
-        
-    REM left bottom horizontal S-block    
-    elsif figure_number=12 then
-        figure_number = rotate(figure(), figure_number, 13, 1, 0)
-        
-    REM right bottom vertical S-block
-    elsif figure_number=13 then
-        figure_number = rotate(figure(), figure_number, 12, -1, 0)
-        
-    REM right bottom horizontal S-block    
-    elsif figure_number=14 then
-        figure_number = rotate(figure(), figure_number, 15, -1, 0)
-        
-    REM left bottom vertical S-block
-    elsif figure_number=15 then
-        figure_number = rotate(figure(), figure_number, 14, 1, 0)
-        
-    REM left bottom nose top horizontal T-brick
-    elsif figure_number=16 then
-        figure_number = rotate(figure(), figure_number, 17, 1, 1)
-        
-    REM nose right vertical T-block
-    elsif figure_number=17 then
-        figure_number = rotate(figure(), figure_number, 18, 0, 0)
-        
-    REM nose down horizontal T-block
-    elsif figure_number=18 then
-        figure_number = rotate(figure(), figure_number, 19, 0, 0)
-        
-    REM nose left vertical T-block
-    elsif figure_number=19 then
-        figure_number = rotate(figure(), figure_number, 16, -1, -1)
-    fi
-    return figure_number
-end sub
-
-
 sub calculate_figure_number()
     figure_number = int(ran(19))+1 REM 0 means empty
     switch figure_number
@@ -1120,11 +1073,16 @@ REM       "while figure is falling down and has not landed yet"-LOOP
                             draw_figure(root_block_x, root_block_y, figure(), figure_number)
                         fi
                     elsif keystroke$ = "up" or keystroke$ = "s" then
-                        figure_number = rotate_clockwise(root_block_x, root_block_y, figure(), figure_number)
+						INTERMEDIATE_BLOCK_X = root_block_x
+						INTERMEDIATE_BLOCK_Y = root_block_y
+                        figure_number = rotate(figure(), figure_number, CLOCKWISE_ROTATED_FIGURE_NUMBER(figure_number), CLOCKWISE_ROTATED_X_SHIFT(figure_number), CLOCKWISE_ROTATED_Y_SHIFT(figure_number))
                         root_block_x = INTERMEDIATE_BLOCK_X
                         root_block_y = INTERMEDIATE_BLOCK_Y
                     elsif keystroke$ = "d" then
-                        figure_number = rotate_counterclockwise(root_block_x, root_block_y, figure(), figure_number)
+                    
+						INTERMEDIATE_BLOCK_X = root_block_x
+						INTERMEDIATE_BLOCK_Y = root_block_y
+                        figure_number = rotate(figure(), figure_number, COUNTERCLOCKWISE_ROTATED_FIGURE_NUMBER(figure_number), COUNTERCLOCKWISE_ROTATED_X_SHIFT(figure_number), COUNTERCLOCKWISE_ROTATED_Y_SHIFT(figure_number))
                         root_block_x = INTERMEDIATE_BLOCK_X
                         root_block_y = INTERMEDIATE_BLOCK_Y
                     elsif keystroke$ = "p" then
