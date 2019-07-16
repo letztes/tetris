@@ -1101,6 +1101,7 @@ REM       "while figure is falling down and has not landed yet"-LOOP
                 break
             fi
         wend
+        sleep 0.5 REM sleep half a second before new brick appears
     wend
     print "not allowed to get to here!"
     sleep 1
