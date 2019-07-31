@@ -758,21 +758,21 @@ sub rotate(figure(), figure_number, figure_number_rotated, x_shift, y_shift)
 end sub
 
 sub calculate_figure_number()
-    figure_number = int(ran(19))+1 REM 0 means empty
-    switch figure_number
-REM Double the probability for the left bottom S block
-        case 20: figure_number = 12
-        case 21: figure_number = 13
-REM Double the probability for the right bottom S block
-        case 22: figure_number = 14
-        case 23: figure_number = 15
-REM Double the probability for the stick
-        case 24: figure_number = 1
-        case 25: figure_number = 2
-REM Quadruple the probability for the square block
-        case 26: figure_number = 3
-        case 27: figure_number = 3
-        case 28: figure_number = 3
+    local figure_number
+    random_number = int(ran(6))+1 REM 0 means empty
+    switch random_number
+REM stick
+        case 1: figure_number = 1:break
+REM square block
+        case 2: figure_number = 3:break
+REM L block
+        case 3: figure_number = 4:break
+REM J block
+        case 4: figure_number = 8:break
+REM S block
+        case 5: figure_number = 12:break
+REM Z block
+        case 6: figure_number = 14:break
     end switch
     return figure_number
 end sub
